@@ -11,7 +11,6 @@ type User @model {
   # posts: [Post!]! @relation(name: "UserPosts")
 }
 
-
 # Uncomment the model below as well
 
 # type Post @model {
@@ -21,3 +20,10 @@ type User @model {
 #   # Every relation also required a back-relation (to determine 1:1, 1:n or n:m)
 #   author: User! @relation(name: "UserPosts")
 # }
+
+type Board @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+}
