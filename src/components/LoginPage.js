@@ -5,7 +5,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN_KEY } from '../constants';
 
-class SignInPage extends React.Component {
+class LoginPage extends React.Component {
   state = {
     loading: false,
     error: '',
@@ -15,11 +15,11 @@ class SignInPage extends React.Component {
     const query = queryString.parse(this.props.location.search);
 
     if (query.code) {
-      this.signInUser(query.code);
+      this.logInUser(query.code);
     }
   }
 
-  signInUser = async githubCode => {
+  logInUser = async githubCode => {
     try {
       this.setState({ loading: true });
 
@@ -43,8 +43,14 @@ class SignInPage extends React.Component {
   };
 
   getGithubAuthUrl = () => {
+    // get current URL without query string
+    // reference: https://stackoverflow.com/a/5817566
+    const { protocol, host, pathname } = window.location;
+    const callbackUrl = protocol + '//' + host + pathname;
+
     const query = queryString.stringify({
       client_id: GITHUB_CLIENT_ID,
+      redirect_uri: callbackUrl,
     });
 
     return `https://github.com/login/oauth/authorize?${query}`;
@@ -69,10 +75,10 @@ class SignInPage extends React.Component {
       <Redirect to="/" />
     ) : (
       <div>
-        <h1>Sign In</h1>
+        <h1>Log In</h1>
         {this.state.loading && 'Loading'}
         {this.state.error && 'Error'}
-        <button onClick={this.goToGithubAuthPage}>Sign in with GitHub</button>
+        <button onClick={this.goToGithubAuthPage}>Log in with GitHub</button>
       </div>
     );
   }
@@ -102,4 +108,4 @@ export default compose(
   graphql(AUTHENTICATE_USER_MUTATION, {
     name: 'authenticateUserMutation',
   }),
-)(SignInPage);
+)(LoginPage);

@@ -20,11 +20,7 @@ function PrivateRoute({ component: Component, loggedInUserQuery, ...rest }) {
         const isLoggedIn =
           loggedInUserQuery.loggedInUser && loggedInUserQuery.loggedInUser.id;
 
-        return isLoggedIn ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/signin" />
-        );
+        return isLoggedIn ? <Component {...props} /> : <Redirect to="/login" />;
       }}
     />
   );
