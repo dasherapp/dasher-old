@@ -2,13 +2,13 @@ import React from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-function BoardsPage({ data }) {
-  if (data.loading) {
+function BoardsPage({ allBoardsQuery }) {
+  if (allBoardsQuery.loading) {
     return <div>Loading</div>;
   }
 
-  if (data.error) {
-    console.error(data.error.stack);
+  if (allBoardsQuery.error) {
+    console.error(allBoardsQuery.error.stack);
     return <div>Error</div>;
   }
 
@@ -16,7 +16,9 @@ function BoardsPage({ data }) {
     <div>
       <h1>Boards</h1>
       <ul>
-        {data.allBoards.map(board => <li key={board.id}>{board.name}</li>)}
+        {allBoardsQuery.allBoards.map(board => (
+          <li key={board.id}>{board.name}</li>
+        ))}
       </ul>
     </div>
   );
@@ -31,4 +33,6 @@ const ALL_BOARDS_QUERY = gql`
   }
 `;
 
-export default graphql(ALL_BOARDS_QUERY)(BoardsPage);
+export default graphql(ALL_BOARDS_QUERY, { name: 'allBoardsQuery' })(
+  BoardsPage,
+);
