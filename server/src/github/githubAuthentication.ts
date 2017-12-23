@@ -4,10 +4,16 @@ import * as fetch from 'isomorphic-fetch';
 
 interface User {
   id: string;
+  name: string | null;
+  username: string;
+  avatarUrl: string;
 }
 
 interface GithubUser {
   id: string;
+  name: string | null;
+  login: string;
+  avatar_url: string;
 }
 
 interface EventData {
@@ -47,7 +53,13 @@ export default async (event: FunctionEvent<EventData>) => {
     let userId: string | null = null;
 
     if (!user) {
-      userId = await createGraphcoolUser(api, githubUser.id);
+      userId = await createGraphcoolUser(
+        api,
+        githubUser.id,
+        githubUser.name,
+        githubUser.login,
+        githubUser.avatar_url,
+      );
     } else {
       userId = user.id;
     }
@@ -104,6 +116,9 @@ async function getGraphcoolUser(
     query getUser($githubUserId: String!) {
       User(githubUserId: $githubUserId) {
         id
+        name
+        username
+        avatarUrl
       }
     }
   `;
@@ -119,11 +134,22 @@ async function getGraphcoolUser(
 async function createGraphcoolUser(
   api: GraphQLClient,
   githubUserId: string,
+  name: string | null,
+  username: string,
+  avatarUrl: string,
 ): Promise<string> {
   const mutation = `
-    mutation createUser($githubUserId: String!) {
+    mutation createUser(
+      $githubUserId: String!,
+      $name: String,
+      $username: String!,
+      $avatarUrl: String!
+    ) {
       createUser(
-        githubUserId: $githubUserId
+        githubUserId: $githubUserId,
+        name: $name,
+        username: $username,
+        avatarUrl: $avatarUrl
       ) {
         id
       }
@@ -133,6 +159,9 @@ async function createGraphcoolUser(
   const variables = {
     // need to 'cast' to string, otherwise it will be seen as integer by GraphQL (because it's a number string)
     githubUserId: `${githubUserId}`,
+    name,
+    username,
+    avatarUrl,
   };
 
   return api
