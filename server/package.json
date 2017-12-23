@@ -1,4 +1,9 @@
 {
   "name": "dasher-server",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "graphcool-lib": "^0.1.0",
+    "graphql-request": "^1.4.0",
+    "isomorphic-fetch": "^2.2.1"
+  }
 }

@@ -19,6 +19,23 @@ types: ./types.graphql
 
 
 functions:
+  githubAuthentication:
+    handler:
+      code:
+        src: ./src/github/githubAuthentication.ts
+        environment:
+          GITHUB_CLIENT_ID: ${env:GITHUB_CLIENT_ID}
+          GITHUB_CLIENT_SECRET: ${env:GITHUB_CLIENT_SECRET}
+    type: resolver
+    schema: ./src/github/githubAuthentication.graphql
+
+  loggedInUser:
+    handler:
+      code:
+        src: ./src/github/loggedInUser.ts
+    type: resolver
+    schema: ./src/github/loggedInUser.graphql
+
   hello:
     handler:
       code: src/hello.js

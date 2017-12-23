@@ -3,8 +3,9 @@
 
 type User @model {
   id: ID! @isUnique
-  name: String
-  dateOfBirth: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  githubUserId: String @isUnique
 
   # Uncomment below - you can declare relations between models like this
 
