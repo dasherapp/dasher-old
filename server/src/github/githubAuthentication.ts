@@ -61,7 +61,13 @@ export default async (event: FunctionEvent<EventData>) => {
         githubUser.avatar_url,
       );
     } else {
-      userId = user.id;
+      userId = await updateGraphcoolUser(
+        api,
+        user.id,
+        githubUser.name,
+        githubUser.login,
+        githubUser.avatar_url,
+      );
     }
 
     // generate node token for User node
@@ -167,4 +173,41 @@ async function createGraphcoolUser(
   return api
     .request<{ createUser: User }>(mutation, variables)
     .then(r => r.createUser.id);
+}
+
+async function updateGraphcoolUser(
+  api: GraphQLClient,
+  id: string,
+  name: string | null,
+  username: string,
+  avatarUrl: string,
+): Promise<string> {
+  const mutation = `
+    mutation updateUser(
+      $id: ID!,
+      $name: String,
+      $username: String!,
+      $avatarUrl: String!
+    ) {
+      updateUser(
+        id: $id,
+        name: $name,
+        username: $username,
+        avatarUrl: $avatarUrl
+      ) {
+        id
+      }
+    }
+  `;
+
+  const variables = {
+    id,
+    name,
+    username,
+    avatarUrl,
+  };
+
+  return api
+    .request<{ updateUser: User }>(mutation, variables)
+    .then(r => r.updateUser.id);
 }
