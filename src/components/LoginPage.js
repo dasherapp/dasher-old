@@ -78,7 +78,9 @@ class LoginPage extends React.Component {
         <h1>Log In</h1>
         {this.state.loading && 'Loading'}
         {this.state.error && 'Error'}
-        <button onClick={this.goToGithubAuthPage}>Log in with GitHub</button>
+        <button onClick={this.goToGithubAuthPage} disabled={this.state.loading}>
+          Log in with GitHub
+        </button>
       </div>
     );
   }
