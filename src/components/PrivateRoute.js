@@ -1,20 +1,44 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { GRAPHCOOL_TOKEN_KEY } from '../constants';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
-function PrivateRoute({ component: Component, ...rest }) {
+function PrivateRoute({ component: Component, loggedInUserQuery, ...rest }) {
   return (
     <Route
       {...rest}
-      render={props =>
-        localStorage.getItem(GRAPHCOOL_TOKEN_KEY) ? (
+      render={props => {
+        if (loggedInUserQuery.loading) {
+          return <div>Loading</div>;
+        }
+
+        if (loggedInUserQuery.error) {
+          console.error(loggedInUserQuery.error);
+          return <div>Error</div>;
+        }
+
+        const isLoggedIn =
+          loggedInUserQuery.loggedInUser && loggedInUserQuery.loggedInUser.id;
+
+        return isLoggedIn ? (
           <Component {...props} />
         ) : (
           <Redirect to="/signin" />
-        )
-      }
+        );
+      }}
     />
   );
 }
 
-export default PrivateRoute;
+const LOGGED_IN_USER_QUERY = gql`
+  query LoggedInUserQuery {
+    loggedInUser {
+      id
+    }
+  }
+`;
+
+export default graphql(LOGGED_IN_USER_QUERY, {
+  name: 'loggedInUserQuery',
+  options: { fetchPolicy: 'network-only' },
+})(PrivateRoute);
