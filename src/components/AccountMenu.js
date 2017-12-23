@@ -28,12 +28,15 @@ class AccountMenu extends React.Component {
     if (isLoggedIn) {
       const { name, username, avatarUrl } = loggedInUserQuery.loggedInUser;
       return (
-        <div>
-          <img src={avatarUrl} width="32" alt={username} />
+        <details>
+          <summary>
+            <img src={avatarUrl} width="32" alt={username} />
+          </summary>
+
           <p>{name}</p>
           <p>{username}</p>
           <button onClick={this.logOutUser}>Log out</button>
-        </div>
+        </details>
       );
     }
 
