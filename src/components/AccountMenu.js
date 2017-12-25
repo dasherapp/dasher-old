@@ -11,22 +11,14 @@ class AccountMenu extends React.Component {
   };
 
   render() {
-    const { loggedInUserQuery } = this.props;
+    const { data } = this.props;
 
-    if (loggedInUserQuery.loading) {
+    if (data.loading) {
       return <div>Loading</div>;
     }
 
-    if (loggedInUserQuery.error) {
-      console.error(loggedInUserQuery.error.stack);
-      return <div>Error</div>;
-    }
-
-    const isLoggedIn =
-      loggedInUserQuery.loggedInUser && loggedInUserQuery.loggedInUser.id;
-
-    if (isLoggedIn) {
-      const { name, username, avatarUrl } = loggedInUserQuery.loggedInUser;
+    if (data.loggedInUser) {
+      const { name, username, avatarUrl } = data.loggedInUser;
       return (
         <details>
           <summary>
@@ -44,8 +36,8 @@ class AccountMenu extends React.Component {
   }
 }
 
-const LOGGED_IN_USER_QUERY = gql`
-  query LoggedInUserQuery {
+const LOGGED_IN_USER = gql`
+  query LoggedInUser {
     loggedInUser {
       id
       name
@@ -56,9 +48,6 @@ const LOGGED_IN_USER_QUERY = gql`
 `;
 
 export default compose(
-  graphql(LOGGED_IN_USER_QUERY, {
-    name: 'loggedInUserQuery',
-    options: { fetchPolicy: 'network-only' },
-  }),
+  graphql(LOGGED_IN_USER, { options: { fetchPolicy: 'network-only' } }),
   withRouter,
 )(AccountMenu);
