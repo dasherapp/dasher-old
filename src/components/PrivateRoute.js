@@ -3,38 +3,31 @@ import { Route, Redirect } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-function PrivateRoute({ component: Component, loggedInUserQuery, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={props => {
-        if (loggedInUserQuery.loading) {
-          return <div>Loading</div>;
-        }
+const PrivateRoute = ({ component: Component, data, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => {
+      if (data.loading) {
+        return <div>Loading</div>;
+      }
 
-        if (loggedInUserQuery.error) {
-          console.error(loggedInUserQuery.error);
-          return <div>Error</div>;
-        }
+      return data.loggedInUser ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/login" />
+      );
+    }}
+  />
+);
 
-        const isLoggedIn =
-          loggedInUserQuery.loggedInUser && loggedInUserQuery.loggedInUser.id;
-
-        return isLoggedIn ? <Component {...props} /> : <Redirect to="/login" />;
-      }}
-    />
-  );
-}
-
-const LOGGED_IN_USER_QUERY = gql`
-  query LoggedInUserQuery {
+const LOGGED_IN_USER = gql`
+  query LoggedInUser {
     loggedInUser {
       id
     }
   }
 `;
 
-export default graphql(LOGGED_IN_USER_QUERY, {
-  name: 'loggedInUserQuery',
+export default graphql(LOGGED_IN_USER, {
   options: { fetchPolicy: 'network-only' },
 })(PrivateRoute);
