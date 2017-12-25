@@ -56,7 +56,7 @@ class LoginPage extends React.Component {
       return <div>Loading</div>;
     }
 
-    return data.loggedInUser ? (
+    return data.user ? (
       <Redirect to="/" />
     ) : (
       <div>
@@ -73,9 +73,9 @@ class LoginPage extends React.Component {
   }
 }
 
-const LOGGED_IN_USER = gql`
-  query LoggedInUser {
-    loggedInUser {
+const USER = gql`
+  query User {
+    user {
       id
     }
   }
@@ -90,7 +90,7 @@ const AUTHENTICATE_USER = gql`
 `;
 
 export default compose(
-  graphql(LOGGED_IN_USER, {
+  graphql(USER, {
     options: { fetchPolicy: 'network-only' },
   }),
   graphql(AUTHENTICATE_USER, {

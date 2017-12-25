@@ -11,23 +11,19 @@ const PrivateRoute = ({ component: Component, data, ...rest }) => (
         return <div>Loading</div>;
       }
 
-      return data.loggedInUser ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/login" />
-      );
+      return data.user ? <Component {...props} /> : <Redirect to="/login" />;
     }}
   />
 );
 
-const LOGGED_IN_USER = gql`
-  query LoggedInUser {
-    loggedInUser {
+const USER = gql`
+  query User {
+    user {
       id
     }
   }
 `;
 
-export default graphql(LOGGED_IN_USER, {
+export default graphql(USER, {
   options: { fetchPolicy: 'network-only' },
 })(PrivateRoute);
