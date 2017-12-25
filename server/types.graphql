@@ -15,4 +15,13 @@ type Board @model {
   updatedAt: DateTime!
   name: String!
   createdBy: User! @relation(name: "UserBoards")
+  columns: [Column!]! @relation(name: "BoardColumns")
+}
+
+type Column @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  board: Board! @relation(name: "BoardColumns")
 }
