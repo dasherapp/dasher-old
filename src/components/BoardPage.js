@@ -16,6 +16,13 @@ const BoardPage = ({ match, data }) => (
         <p>id: {data.Board.id}</p>
         <p>createdAt: {data.Board.createdAt}</p>
         <p>updatedAt: {data.Board.updatedAt}</p>
+        <p>columns:</p>
+        <ul>
+          {data.Board &&
+            data.Board.columns.map(column => (
+              <li key={column.id}>{column.name}</li>
+            ))}
+        </ul>
       </div>
     )}
   </div>
@@ -28,6 +35,10 @@ const BOARD = gql`
       name
       createdAt
       updatedAt
+      columns(orderBy: updatedAt_DESC) {
+        id
+        name
+      }
     }
   }
 `;
