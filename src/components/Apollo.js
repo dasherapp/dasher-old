@@ -10,7 +10,7 @@ const httpLink = new HttpLink({
   uri: 'https://api.graph.cool/simple/v1/cjbhufyy601sx0170z4w9rxw8',
 });
 
-const middlewareLink = new ApolloLink((operation, forward) => {
+const middlewareAuthLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(GRAPHCOOL_TOKEN_KEY);
   operation.setContext({
     headers: {
@@ -21,12 +21,10 @@ const middlewareLink = new ApolloLink((operation, forward) => {
 });
 
 const client = new ApolloClient({
-  link: middlewareLink.concat(httpLink),
+  link: middlewareAuthLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
-function Apollo(props) {
-  return <ApolloProvider client={client} {...props} />;
-}
+const Apollo = props => <ApolloProvider client={client} {...props} />;
 
 export default Apollo;
