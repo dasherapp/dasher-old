@@ -2,15 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
 
-const BoardPage = ({ match, data }) => (
-  <div>
-    <Link to="/">Back</Link>
-    <AccountMenu />
-    {data.loading ? (
-      <div>Loading</div>
-    ) : (
+const BoardPage = ({ match, data }) => {
+  if (data.loading) {
+    return <div>Loading</div>;
+  }
+
+  if (!data.Board) {
+    return <NotFoundPage />;
+  }
+
+  return (
+    <div>
+      <AccountMenu />
+      <Link to="/">Back</Link>
       <div>
         <h1>{data.Board.name}</h1>
         <p>id: {data.Board.id}</p>
@@ -24,9 +31,9 @@ const BoardPage = ({ match, data }) => (
             ))}
         </ul>
       </div>
-    )}
-  </div>
-);
+    </div>
+  );
+};
 
 const BOARD = gql`
   query Board($id: ID!) {
