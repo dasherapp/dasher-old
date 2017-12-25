@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
@@ -30,6 +30,15 @@ const BoardPage = ({ match, data }) => {
               <li key={column.id}>{column.name}</li>
             ))}
         </ul>
+        <form>
+          <div>
+            <label for="column_name">Create a new column: </label>
+            <input type="text" id="column_name" name="name" />
+          </div>
+          <div>
+            <button>Create</button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -50,6 +59,21 @@ const BOARD = gql`
   }
 `;
 
-export default graphql(BOARD, {
-  options: ({ match }) => ({ variables: { id: match.params.id } }),
-})(BoardPage);
+const CREATE_COLUMN_MUTATION = gql`
+  mutation createColumnMutation($name: String!, $boardId: ID!) {
+    createColumn(name: $name, boardId: $boardId) {
+      id
+      name
+      board {
+        id
+      }
+    }
+  }
+`;
+
+export default compose(
+  graphql(BOARD, {
+    options: ({ match }) => ({ variables: { id: match.params.id } }),
+  }),
+  graphql(CREATE_COLUMN_MUTATION, { name: 'createColumnMutation' }),
+)(BoardPage);
