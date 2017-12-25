@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -9,19 +10,27 @@ const Boards = ({ data }) => (
       {data.loading ? (
         <div>Loading</div>
       ) : (
-        data.allBoards.map(board => <li key={board.id}>{board.name}</li>)
+        data.user &&
+        data.user.boards.map(board => (
+          <li key={board.id}>
+            <Link to={`/board/${board.id}`}>{board.name}</Link>
+          </li>
+        ))
       )}
     </ul>
   </div>
 );
 
-const ALL_BOARDS = gql`
-  query AllBoards {
-    allBoards(orderBy: updatedAt_DESC) {
+const USER_BOARDS = gql`
+  query UserBoards {
+    user {
       id
-      name
+      boards(orderBy: updatedAt_DESC) {
+        id
+        name
+      }
     }
   }
 `;
 
-export default graphql(ALL_BOARDS)(Boards);
+export default graphql(USER_BOARDS)(Boards);
