@@ -3,14 +3,9 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import AccountMenu from './AccountMenu';
 
-function HomePage({ allBoardsQuery }) {
-  if (allBoardsQuery.loading) {
+function HomePage({ data }) {
+  if (data.loading) {
     return <div>Loading</div>;
-  }
-
-  if (allBoardsQuery.error) {
-    console.error(allBoardsQuery.error.stack);
-    return <div>Error</div>;
   }
 
   return (
@@ -18,16 +13,14 @@ function HomePage({ allBoardsQuery }) {
       <AccountMenu />
       <h1>Boards</h1>
       <ul>
-        {allBoardsQuery.allBoards.map(board => (
-          <li key={board.id}>{board.name}</li>
-        ))}
+        {data.allBoards.map(board => <li key={board.id}>{board.name}</li>)}
       </ul>
     </div>
   );
 }
 
-const ALL_BOARDS_QUERY = gql`
-  query AllBoardsQuery {
+const ALL_BOARDS = gql`
+  query AllBoards {
     allBoards(orderBy: updatedAt_DESC) {
       id
       name
@@ -35,4 +28,4 @@ const ALL_BOARDS_QUERY = gql`
   }
 `;
 
-export default graphql(ALL_BOARDS_QUERY, { name: 'allBoardsQuery' })(HomePage);
+export default graphql(ALL_BOARDS)(HomePage);
