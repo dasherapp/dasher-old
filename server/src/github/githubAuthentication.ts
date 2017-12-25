@@ -4,9 +4,6 @@ import * as fetch from 'isomorphic-fetch';
 
 interface User {
   id: string;
-  name: string | null;
-  username: string;
-  avatarUrl: string;
 }
 
 interface GithubUser {
@@ -122,9 +119,6 @@ async function getGraphcoolUser(
     query getUser($githubUserId: String!) {
       User(githubUserId: $githubUserId) {
         id
-        name
-        username
-        avatarUrl
       }
     }
   `;
