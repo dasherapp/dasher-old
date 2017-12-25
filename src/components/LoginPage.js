@@ -1,15 +1,12 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import queryString from 'query-string';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import queryString from 'query-string';
 import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN_KEY } from '../constants';
 
 class LoginPage extends React.Component {
-  state = {
-    loading: false,
-    error: '',
-  };
+  state = { loading: false, error: '' };
 
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
@@ -23,14 +20,9 @@ class LoginPage extends React.Component {
     try {
       this.setState({ loading: true });
 
-      const response = await this.props.authenticateUserMutation({
-        variables: { githubCode },
-      });
+      const { data } = await this.props.authenticateUser(githubCode);
 
-      localStorage.setItem(
-        GRAPHCOOL_TOKEN_KEY,
-        response.data.authenticateUser.token,
-      );
+      localStorage.setItem(GRAPHCOOL_TOKEN_KEY, data.authenticateUser.token);
 
       this.props.history.replace('/');
     } catch (error) {
@@ -57,28 +49,23 @@ class LoginPage extends React.Component {
   };
 
   render() {
-    const { loggedInUserQuery } = this.props;
+    const { data } = this.props;
+    const { loading, error } = this.state;
 
-    if (loggedInUserQuery.loading) {
+    if (data.loading) {
       return <div>Loading</div>;
     }
 
-    if (loggedInUserQuery.error) {
-      console.error(loggedInUserQuery.error);
-      return <div>Error</div>;
-    }
-
-    const isLoggedIn =
-      loggedInUserQuery.loggedInUser && loggedInUserQuery.loggedInUser.id;
-
-    return isLoggedIn ? (
+    return data.loggedInUser ? (
       <Redirect to="/" />
     ) : (
       <div>
         <h1>Log In</h1>
-        {this.state.loading && 'Loading'}
-        {this.state.error && 'Error'}
-        <button onClick={this.goToGithubAuthPage} disabled={this.state.loading}>
+
+        {loading && <p>Loading</p>}
+        {error && <p>Error</p>}
+
+        <button onClick={this.goToGithubAuthPage} disabled={loading}>
           Log in with GitHub
         </button>
       </div>
@@ -86,16 +73,16 @@ class LoginPage extends React.Component {
   }
 }
 
-const LOGGED_IN_USER_QUERY = gql`
-  query LoggedInUserQuery {
+const LOGGED_IN_USER = gql`
+  query LoggedInUser {
     loggedInUser {
       id
     }
   }
 `;
 
-const AUTHENTICATE_USER_MUTATION = gql`
-  mutation AuthenticateUserMutation($githubCode: String!) {
+const AUTHENTICATE_USER = gql`
+  mutation AuthenticateUser($githubCode: String!) {
     authenticateUser(githubCode: $githubCode) {
       token
     }
@@ -103,11 +90,12 @@ const AUTHENTICATE_USER_MUTATION = gql`
 `;
 
 export default compose(
-  graphql(LOGGED_IN_USER_QUERY, {
-    name: 'loggedInUserQuery',
+  graphql(LOGGED_IN_USER, {
     options: { fetchPolicy: 'network-only' },
   }),
-  graphql(AUTHENTICATE_USER_MUTATION, {
-    name: 'authenticateUserMutation',
+  graphql(AUTHENTICATE_USER, {
+    props: ({ mutate }) => ({
+      authenticateUser: githubCode => mutate({ variables: { githubCode } }),
+    }),
   }),
 )(LoginPage);
