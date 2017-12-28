@@ -7,34 +7,47 @@ import { showEditBoardModal, showDeleteBoardModal } from '../actions';
 import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
 
-const BoardPage = ({ match, data, dispatch }) => {
-  if (data.loading) {
+const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
+  if (userQuery.loading || boardQuery.loading) {
     return <div>Loading</div>;
   }
 
-  if (!data.Board) {
+  if (!boardQuery.Board) {
     return <NotFoundPage />;
   }
+
+  const isOwner =
+    userQuery.user && userQuery.user.id === boardQuery.Board.createdBy.id;
 
   return (
     <div>
       <AccountMenu />
       <Link to="/">Back</Link>
       <div>
-        <h1>{data.Board.name}</h1>
-        <button onClick={() => dispatch(showEditBoardModal(data.Board.id))}>
-          Edit
-        </button>
-        <button onClick={() => dispatch(showDeleteBoardModal(data.Board.id))}>
-          Delete
-        </button>
-        <p>id: {data.Board.id}</p>
-        <p>createdAt: {data.Board.createdAt}</p>
-        <p>updatedAt: {data.Board.updatedAt}</p>
+        <h1>{boardQuery.Board.name}</h1>
+        {isOwner && (
+          <div>
+            <button
+              onClick={() => dispatch(showEditBoardModal(boardQuery.Board.id))}
+            >
+              Edit
+            </button>
+            <button
+              onClick={() =>
+                dispatch(showDeleteBoardModal(boardQuery.Board.id))
+              }
+            >
+              Delete
+            </button>
+          </div>
+        )}
+        <p>id: {boardQuery.Board.id}</p>
+        <p>createdAt: {boardQuery.Board.createdAt}</p>
+        <p>updatedAt: {boardQuery.Board.updatedAt}</p>
         <p>columns:</p>
         <ul>
-          {data.Board &&
-            data.Board.columns.map(column => (
+          {boardQuery.Board &&
+            boardQuery.Board.columns.map(column => (
               <li key={column.id}>{column.name}</li>
             ))}
         </ul>
@@ -59,10 +72,21 @@ const BOARD = gql`
       name
       createdAt
       updatedAt
+      createdBy {
+        id
+      }
       columns(orderBy: updatedAt_DESC) {
         id
         name
       }
+    }
+  }
+`;
+
+const USER = gql`
+  query User {
+    user {
+      id
     }
   }
 `;
@@ -80,7 +104,12 @@ const CREATE_COLUMN_MUTATION = gql`
 `;
 
 export default compose(
+  graphql(USER, {
+    name: 'userQuery',
+    options: { fetchPolicy: 'network-only' },
+  }),
   graphql(BOARD, {
+    name: 'boardQuery',
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
   graphql(CREATE_COLUMN_MUTATION, { name: 'createColumnMutation' }),
