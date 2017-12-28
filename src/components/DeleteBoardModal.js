@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { hideModal } from '../actions';
+import { USER_BOARDS } from './Boards';
 
 export const DELETE_BOARD_MODAL = 'DELETE_BOARD_MODAL';
 
@@ -12,8 +13,8 @@ class DeleteBoardModal extends React.Component {
     this.props.dispatch(hideModal());
   };
 
-  handleDelete = () => {
-    this.props.deleteBoard(this.props.boardId);
+  handleDelete = async () => {
+    await this.props.deleteBoard(this.props.boardId);
     this.handleClose();
   };
 
@@ -32,7 +33,7 @@ class DeleteBoardModal extends React.Component {
               This action cannot be undone.
             </p>
             <button onClick={this.handleClose}>Cancel</button>
-            <button onClick={this.handleClose}>Delete</button>
+            <button onClick={this.handleDelete}>Delete</button>
           </div>
         )}
       </Modal>
@@ -62,7 +63,22 @@ export default compose(
   }),
   graphql(DELETE_BOARD, {
     props: ({ mutate }) => ({
-      deleteBoard: boardId => mutate({ variables: { id: boardId } }),
+      deleteBoard: boardId =>
+        mutate({
+          variables: { id: boardId },
+          update: (store, { data: { deleteBoard } }) => {
+            const data = store.readQuery({ query: USER_BOARDS });
+
+            data.user.boards = data.user.boards.filter(
+              board => board.id !== deleteBoard.id,
+            );
+
+            store.writeQuery({
+              query: USER_BOARDS,
+              data,
+            });
+          },
+        }),
     }),
   }),
   connect(),

@@ -26,7 +26,7 @@ const Boards = ({ data, dispatch }) => (
   </div>
 );
 
-const USER_BOARDS = gql`
+export const USER_BOARDS = gql`
   query UserBoards {
     user {
       id
