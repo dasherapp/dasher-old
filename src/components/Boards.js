@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { connect } from 'react-redux';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import { showDeleteBoardModal } from '../actions';
 
-const Boards = ({ data }) => (
+const Boards = ({ data, dispatch }) => (
   <div>
     <h1>Boards</h1>
     <ul>
@@ -14,6 +16,9 @@ const Boards = ({ data }) => (
         data.user.boards.map(board => (
           <li key={board.id}>
             <Link to={`/board/${board.id}`}>{board.name}</Link>
+            <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>
+              Delete
+            </button>
           </li>
         ))
       )}
@@ -33,4 +38,4 @@ const USER_BOARDS = gql`
   }
 `;
 
-export default graphql(USER_BOARDS)(Boards);
+export default compose(graphql(USER_BOARDS), connect())(Boards);
