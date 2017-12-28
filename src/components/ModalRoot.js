@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import EditBoardModal, { EDIT_BOARD_MODAL } from './EditBoardModal';
 import DeleteBoardModal, { DELETE_BOARD_MODAL } from './DeleteBoardModal';
 
 const MODAL_COMPONENTS = {
+  [EDIT_BOARD_MODAL]: EditBoardModal,
   [DELETE_BOARD_MODAL]: DeleteBoardModal,
 };
 

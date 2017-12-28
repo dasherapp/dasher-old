@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { showDeleteBoardModal } from '../actions';
+import { showEditBoardModal, showDeleteBoardModal } from '../actions';
 import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
 
@@ -22,6 +22,9 @@ const BoardPage = ({ match, data, dispatch }) => {
       <Link to="/">Back</Link>
       <div>
         <h1>{data.Board.name}</h1>
+        <button onClick={() => dispatch(showEditBoardModal(data.Board.id))}>
+          Edit
+        </button>
         <button onClick={() => dispatch(showDeleteBoardModal(data.Board.id))}>
           Delete
         </button>
