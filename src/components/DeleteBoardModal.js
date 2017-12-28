@@ -1,8 +1,9 @@
 import React from 'react';
-import Modal from 'react-modal';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import Modal from 'react-modal';
 import { hideModal } from '../actions';
 import { USER_BOARDS } from './Boards';
 
@@ -16,6 +17,7 @@ class DeleteBoardModal extends React.Component {
   handleDelete = async () => {
     await this.props.deleteBoard(this.props.boardId);
     this.handleClose();
+    this.props.history.push('/');
   };
 
   render() {
@@ -58,6 +60,7 @@ const DELETE_BOARD = gql`
 `;
 
 export default compose(
+  withRouter,
   graphql(BOARD, {
     options: ({ boardId }) => ({ variables: { id: boardId } }),
   }),

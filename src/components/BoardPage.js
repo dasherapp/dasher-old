@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import { showDeleteBoardModal } from '../actions';
 import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
 
-const BoardPage = ({ match, data }) => {
+const BoardPage = ({ match, data, dispatch }) => {
   if (data.loading) {
     return <div>Loading</div>;
   }
@@ -20,6 +22,9 @@ const BoardPage = ({ match, data }) => {
       <Link to="/">Back</Link>
       <div>
         <h1>{data.Board.name}</h1>
+        <button onClick={() => dispatch(showDeleteBoardModal(data.Board.id))}>
+          Delete
+        </button>
         <p>id: {data.Board.id}</p>
         <p>createdAt: {data.Board.createdAt}</p>
         <p>updatedAt: {data.Board.updatedAt}</p>
@@ -76,4 +81,5 @@ export default compose(
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
   graphql(CREATE_COLUMN_MUTATION, { name: 'createColumnMutation' }),
+  connect(),
 )(BoardPage);
