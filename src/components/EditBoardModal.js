@@ -1,9 +1,11 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import Modal from 'react-modal';
 import { hideModal } from '../actions';
+import { USER_BOARDS } from './Boards';
 
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL';
 
@@ -11,14 +13,18 @@ class EditBoardModal extends React.Component {
   state = { name: '' };
 
   componentDidMount() {
-    if (!this.props.data.loading) {
-      this.initializeFormState(this.props.data.Board);
+    const { boardId, data } = this.props;
+
+    if (boardId && !data.loading) {
+      this.initializeFormState(data.Board);
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.data.loading && !this.props.data.loading) {
-      this.initializeFormState(this.props.data.Board);
+    const { boardId, data } = this.props;
+
+    if (boardId && prevProps.data.loading && !data.loading) {
+      this.initializeFormState(data.Board);
     }
   }
 
@@ -33,33 +39,41 @@ class EditBoardModal extends React.Component {
   };
 
   handleSubmit = async event => {
+    const { boardId, data, history, updateBoard, createBoard } = this.props;
+    const { name } = this.state;
+
     event.preventDefault();
-    await this.props.updateBoard(this.props.boardId, this.state.name);
+
+    if (boardId) {
+      await updateBoard(boardId, name);
+    } else {
+      const response = await createBoard(data.user.id, name);
+      history.push(`/board/${response.data.createBoard.id}`);
+    }
+
     this.handleClose();
   };
 
   render() {
-    const { data } = this.props;
+    const { data, boardId } = this.props;
+    const { name } = this.state;
+
     return (
       <Modal isOpen={true} onRequestClose={this.handleClose}>
         {data.loading ? (
           <div>Loading</div>
         ) : (
           <div>
-            <h1>Edit board</h1>
+            <h1>{boardId ? 'Edit board' : 'New board'}</h1>
             <form id="edit-board" onSubmit={this.handleSubmit}>
               <label>
                 Name
-                <input
-                  value={this.state.name}
-                  onChange={this.handleNameChange}
-                  required
-                />
+                <input value={name} onChange={this.handleNameChange} required />
               </label>
             </form>
             <button onClick={this.handleClose}>Cancel</button>
             <button type="submit" form="edit-board">
-              Save
+              {boardId ? 'Save' : 'Create'}
             </button>
           </div>
         )}
@@ -67,6 +81,14 @@ class EditBoardModal extends React.Component {
     );
   }
 }
+
+const USER = gql`
+  query User {
+    user {
+      id
+    }
+  }
+`;
 
 const BOARD = gql`
   query Board($id: ID!) {
@@ -86,14 +108,44 @@ const UPDATE_BOARD = gql`
   }
 `;
 
+const CREATE_BOARD = gql`
+  mutation CreateBoard($userId: ID!, $name: String!) {
+    createBoard(createdById: $userId, name: $name) {
+      id
+      name
+    }
+  }
+`;
+
 export default compose(
+  withRouter,
+  graphql(USER, {
+    options: { fetchPolicy: 'network-only' },
+    skip: ({ boardId }) => boardId,
+  }),
   graphql(BOARD, {
     options: ({ boardId }) => ({ variables: { id: boardId } }),
+    skip: ({ boardId }) => !boardId,
   }),
   graphql(UPDATE_BOARD, {
-    props: ({ mutate }) => ({
+    name: 'updateBoardMutation',
+    props: ({ updateBoardMutation }) => ({
       updateBoard: (boardId, name) =>
-        mutate({ variables: { id: boardId, name } }),
+        updateBoardMutation({ variables: { id: boardId, name } }),
+    }),
+  }),
+  graphql(CREATE_BOARD, {
+    name: 'createBoardMutation',
+    props: ({ createBoardMutation }) => ({
+      createBoard: (userId, name) =>
+        createBoardMutation({
+          variables: { userId, name },
+          update: (store, { data: { createBoard } }) => {
+            const data = store.readQuery({ query: USER_BOARDS });
+            data.user.boards.unshift(createBoard);
+            store.writeQuery({ query: USER_BOARDS, data });
+          },
+        }),
     }),
   }),
   connect(),

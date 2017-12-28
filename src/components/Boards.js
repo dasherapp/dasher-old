@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { showEditBoardModal, showDeleteBoardModal } from '../actions';
-import CreateBoard from './CreateBoard';
 
 const Boards = ({ data, dispatch }) => (
   <div>
     <h1>Boards</h1>
+    <button onClick={() => dispatch(showEditBoardModal())}>New board</button>
     <ul>
       {data.loading ? (
         <div>Loading</div>
@@ -27,7 +27,6 @@ const Boards = ({ data, dispatch }) => (
         ))
       )}
     </ul>
-    <CreateBoard />
   </div>
 );
 
