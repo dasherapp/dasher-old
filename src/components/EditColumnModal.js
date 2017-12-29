@@ -109,7 +109,7 @@ export default compose(
     skip: ({ columnId }) => !columnId,
   }),
   graphql(UPDATE_COLUMN, {
-    name: 'updatColumnMutation',
+    name: 'updateColumnMutation',
     props: ({ updateColumnMutation }) => ({
       updateColumn: (columnId, name) =>
         updateColumnMutation({ variables: { id: columnId, name } }),

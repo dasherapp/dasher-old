@@ -49,7 +49,16 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
         )}
         <ul>
           {boardQuery.Board.columns.map(column => (
-            <li key={column.id}>{column.name}</li>
+            <li key={column.id}>
+              {column.name}
+              <button
+                onClick={() =>
+                  dispatch(showEditColumnModal({ columnId: column.id }))
+                }
+              >
+                Edit
+              </button>
+            </li>
           ))}
         </ul>
         <button
