@@ -8,7 +8,11 @@ import { showEditBoardModal, showDeleteBoardModal } from '../actions';
 const Boards = ({ data, dispatch }) => (
   <div>
     <h1>Boards</h1>
-    <button onClick={() => dispatch(showEditBoardModal())}>New board</button>
+    <button
+      onClick={() => dispatch(showEditBoardModal({ userId: data.user.id }))}
+    >
+      New board
+    </button>
     <ul>
       {data.loading ? (
         <div>Loading</div>
@@ -17,7 +21,11 @@ const Boards = ({ data, dispatch }) => (
         data.user.boards.map(board => (
           <li key={board.id}>
             <Link to={`/board/${board.id}`}>{board.name}</Link>
-            <button onClick={() => dispatch(showEditBoardModal(board.id))}>
+            <button
+              onClick={() =>
+                dispatch(showEditBoardModal({ boardId: board.id }))
+              }
+            >
               Edit
             </button>
             <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>

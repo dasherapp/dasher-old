@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { showEditBoardModal, showDeleteBoardModal } from '../actions';
+import {
+  showEditBoardModal,
+  showDeleteBoardModal,
+  showEditColumnModal,
+} from '../actions';
 import NotFoundPage from './NotFoundPage';
 import AccountMenu from './AccountMenu';
 
@@ -28,7 +32,9 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
         {isOwner && (
           <div>
             <button
-              onClick={() => dispatch(showEditBoardModal(boardQuery.Board.id))}
+              onClick={() =>
+                dispatch(showEditBoardModal({ boardId: boardQuery.Board.id }))
+              }
             >
               Edit
             </button>
@@ -41,37 +47,28 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
             </button>
           </div>
         )}
-        <p>id: {boardQuery.Board.id}</p>
-        <p>createdAt: {boardQuery.Board.createdAt}</p>
-        <p>updatedAt: {boardQuery.Board.updatedAt}</p>
-        <p>columns:</p>
         <ul>
-          {boardQuery.Board &&
-            boardQuery.Board.columns.map(column => (
-              <li key={column.id}>{column.name}</li>
-            ))}
+          {boardQuery.Board.columns.map(column => (
+            <li key={column.id}>{column.name}</li>
+          ))}
         </ul>
-        <form>
-          <div>
-            <label for="column_name">Create a new column: </label>
-            <input type="text" id="column_name" name="name" />
-          </div>
-          <div>
-            <button>Create</button>
-          </div>
-        </form>
+        <button
+          onClick={() =>
+            dispatch(showEditColumnModal({ boardId: boardQuery.Board.id }))
+          }
+        >
+          Add column
+        </button>
       </div>
     </div>
   );
 };
 
-const BOARD = gql`
+export const BOARD = gql`
   query Board($id: ID!) {
     Board(id: $id) {
       id
       name
-      createdAt
-      updatedAt
       createdBy {
         id
       }
@@ -91,18 +88,6 @@ const USER = gql`
   }
 `;
 
-const CREATE_COLUMN_MUTATION = gql`
-  mutation createColumnMutation($name: String!, $boardId: ID!) {
-    createColumn(name: $name, boardId: $boardId) {
-      id
-      name
-      board {
-        id
-      }
-    }
-  }
-`;
-
 export default compose(
   graphql(USER, {
     name: 'userQuery',
@@ -112,6 +97,5 @@ export default compose(
     name: 'boardQuery',
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
-  graphql(CREATE_COLUMN_MUTATION, { name: 'createColumnMutation' }),
   connect(),
 )(BoardPage);

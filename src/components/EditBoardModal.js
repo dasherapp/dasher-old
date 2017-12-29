@@ -39,7 +39,7 @@ class EditBoardModal extends React.Component {
   };
 
   handleSubmit = async event => {
-    const { boardId, data, history, updateBoard, createBoard } = this.props;
+    const { boardId, userId, history, updateBoard, createBoard } = this.props;
     const { name } = this.state;
 
     event.preventDefault();
@@ -47,48 +47,34 @@ class EditBoardModal extends React.Component {
     if (boardId) {
       await updateBoard(boardId, name);
     } else {
-      const response = await createBoard(data.user.id, name);
-      history.push(`/board/${response.data.createBoard.id}`);
+      const { data } = await createBoard(userId, name);
+      history.push(`/board/${data.createBoard.id}`);
     }
 
     this.handleClose();
   };
 
   render() {
-    const { data, boardId } = this.props;
+    const { boardId } = this.props;
     const { name } = this.state;
 
     return (
       <Modal isOpen={true} onRequestClose={this.handleClose}>
-        {data.loading ? (
-          <div>Loading</div>
-        ) : (
-          <div>
-            <h1>{boardId ? 'Edit board' : 'New board'}</h1>
-            <form id="edit-board" onSubmit={this.handleSubmit}>
-              <label>
-                Name
-                <input value={name} onChange={this.handleNameChange} required />
-              </label>
-            </form>
-            <button onClick={this.handleClose}>Cancel</button>
-            <button type="submit" form="edit-board">
-              {boardId ? 'Save' : 'Create'}
-            </button>
-          </div>
-        )}
+        <h1>{boardId ? 'Edit board' : 'New board'}</h1>
+        <form id="edit-board" onSubmit={this.handleSubmit}>
+          <label>
+            Name
+            <input value={name} onChange={this.handleNameChange} required />
+          </label>
+        </form>
+        <button onClick={this.handleClose}>Cancel</button>
+        <button type="submit" form="edit-board">
+          {boardId ? 'Save' : 'Create'}
+        </button>
       </Modal>
     );
   }
 }
-
-const USER = gql`
-  query User {
-    user {
-      id
-    }
-  }
-`;
 
 const BOARD = gql`
   query Board($id: ID!) {
@@ -119,10 +105,6 @@ const CREATE_BOARD = gql`
 
 export default compose(
   withRouter,
-  graphql(USER, {
-    options: { fetchPolicy: 'network-only' },
-    skip: ({ boardId }) => boardId,
-  }),
   graphql(BOARD, {
     options: ({ boardId }) => ({ variables: { id: boardId } }),
     skip: ({ boardId }) => !boardId,
