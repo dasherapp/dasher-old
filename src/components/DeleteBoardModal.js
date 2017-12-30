@@ -1,27 +1,27 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
-import Modal from 'react-modal';
-import { hideModal } from '../actions';
-import { USER_BOARDS } from './Boards';
+import React from 'react'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
+import Modal from 'react-modal'
+import { hideModal } from '../actions'
+import { USER_BOARDS } from './Boards'
 
-export const DELETE_BOARD_MODAL = 'DELETE_BOARD_MODAL';
+export const DELETE_BOARD_MODAL = 'DELETE_BOARD_MODAL'
 
 class DeleteBoardModal extends React.Component {
   handleClose = () => {
-    this.props.dispatch(hideModal());
-  };
+    this.props.dispatch(hideModal())
+  }
 
   handleDelete = async () => {
-    await this.props.deleteBoard(this.props.boardId);
-    this.handleClose();
-    this.props.history.push('/');
-  };
+    await this.props.deleteBoard(this.props.boardId)
+    this.handleClose()
+    this.props.history.push('/')
+  }
 
   render() {
-    const { data } = this.props;
+    const { data } = this.props
 
     return (
       <Modal isOpen={true} onRequestClose={this.handleClose}>
@@ -39,7 +39,7 @@ class DeleteBoardModal extends React.Component {
           </div>
         )}
       </Modal>
-    );
+    )
   }
 }
 
@@ -49,7 +49,7 @@ const BOARD = gql`
       name
     }
   }
-`;
+`
 
 const DELETE_BOARD = gql`
   mutation DeleteBoard($id: ID!) {
@@ -57,7 +57,7 @@ const DELETE_BOARD = gql`
       id
     }
   }
-`;
+`
 
 export default compose(
   withRouter,
@@ -70,19 +70,19 @@ export default compose(
         mutate({
           variables: { id: boardId },
           update: (store, { data: { deleteBoard } }) => {
-            const data = store.readQuery({ query: USER_BOARDS });
+            const data = store.readQuery({ query: USER_BOARDS })
 
             data.user.boards = data.user.boards.filter(
               board => board.id !== deleteBoard.id,
-            );
+            )
 
             store.writeQuery({
               query: USER_BOARDS,
               data,
-            });
+            })
           },
         }),
     }),
   }),
   connect(),
-)(DeleteBoardModal);
+)(DeleteBoardModal)

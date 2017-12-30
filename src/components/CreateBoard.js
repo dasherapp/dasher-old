@@ -1,37 +1,34 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
+import React from 'react'
+import { withRouter } from 'react-router-dom'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
 
 class CreateBoard extends React.Component {
-  state = { name: '' };
+  state = { name: '' }
 
   handleNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
+    this.setState({ name: event.target.value })
+  }
 
   handleSubmit = async event => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const { data } = this.props;
+    const { data } = this.props
 
     if (!data.user) {
-      console.warn('Only logged in users can create new posts');
-      return;
+      console.warn('Only logged in users can create new posts')
+      return
     }
 
-    const response = await this.props.createBoard(
-      this.state.name,
-      data.user.id,
-    );
-    this.props.history.push(`/board/${response.data.createBoard.id}`);
-  };
+    const response = await this.props.createBoard(this.state.name, data.user.id)
+    this.props.history.push(`/board/${response.data.createBoard.id}`)
+  }
 
   render() {
-    const { data } = this.props;
+    const { data } = this.props
 
     if (data.loading) {
-      return <div>Loading</div>;
+      return <div>Loading</div>
     }
 
     return (
@@ -46,7 +43,7 @@ class CreateBoard extends React.Component {
         </label>
         <button type="submit">Create board</button>
       </form>
-    );
+    )
   }
 }
 
@@ -56,7 +53,7 @@ const USER = gql`
       id
     }
   }
-`;
+`
 
 const CREATE_BOARD = gql`
   mutation CreateBoard($name: String!, $userId: ID!) {
@@ -64,7 +61,7 @@ const CREATE_BOARD = gql`
       id
     }
   }
-`;
+`
 
 export default compose(
   graphql(USER, { options: { fetchPolicy: 'network-only' } }),
@@ -74,4 +71,4 @@ export default compose(
     }),
   }),
   withRouter,
-)(CreateBoard);
+)(CreateBoard)

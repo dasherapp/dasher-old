@@ -1,60 +1,60 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
-import Modal from 'react-modal';
-import { hideModal } from '../actions';
-import { BOARD } from './BoardPage';
+import React from 'react'
+import { connect } from 'react-redux'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
+import Modal from 'react-modal'
+import { hideModal } from '../actions'
+import { BOARD } from './BoardPage'
 
-export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL';
+export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL'
 
 class EditColumnModal extends React.Component {
-  state = { name: '' };
+  state = { name: '' }
 
   componentDidMount() {
-    const { columnId, data } = this.props;
+    const { columnId, data } = this.props
 
     if (columnId && !data.loading) {
-      this.initializeFormState(data.Column);
+      this.initializeFormState(data.Column)
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { columnId, data } = this.props;
+    const { columnId, data } = this.props
 
     if (columnId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.Column);
+      this.initializeFormState(data.Column)
     }
   }
 
-  initializeFormState = ({ name }) => this.setState({ name });
+  initializeFormState = ({ name }) => this.setState({ name })
 
   handleNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
+    this.setState({ name: event.target.value })
+  }
 
   handleClose = () => {
-    this.props.dispatch(hideModal());
-  };
+    this.props.dispatch(hideModal())
+  }
 
   handleSubmit = async event => {
-    const { columnId, boardId, updateColumn, createColumn } = this.props;
-    const { name } = this.state;
+    const { columnId, boardId, updateColumn, createColumn } = this.props
+    const { name } = this.state
 
-    event.preventDefault();
+    event.preventDefault()
 
     if (columnId) {
-      await updateColumn(columnId, name);
+      await updateColumn(columnId, name)
     } else {
-      await createColumn(boardId, name);
+      await createColumn(boardId, name)
     }
 
-    this.handleClose();
-  };
+    this.handleClose()
+  }
 
   render() {
-    const { columnId } = this.props;
-    const { name } = this.state;
+    const { columnId } = this.props
+    const { name } = this.state
 
     return (
       <Modal isOpen={true} onRequestClose={this.handleClose}>
@@ -72,7 +72,7 @@ class EditColumnModal extends React.Component {
           </button>
         </div>
       </Modal>
-    );
+    )
   }
 }
 
@@ -83,7 +83,7 @@ const COLUMN = gql`
       name
     }
   }
-`;
+`
 
 const UPDATE_COLUMN = gql`
   mutation UpdateColumn($id: ID!, $name: String!) {
@@ -92,7 +92,7 @@ const UPDATE_COLUMN = gql`
       name
     }
   }
-`;
+`
 
 const CREATE_COLUMN = gql`
   mutation CreateColumn($boardId: ID!, $name: String!) {
@@ -101,7 +101,7 @@ const CREATE_COLUMN = gql`
       name
     }
   }
-`;
+`
 
 export default compose(
   graphql(COLUMN, {
@@ -125,16 +125,16 @@ export default compose(
             const data = store.readQuery({
               query: BOARD,
               variables: { id: boardId },
-            });
-            data.Board.columns.push(createColumn);
+            })
+            data.Board.columns.push(createColumn)
             store.writeQuery({
               query: BOARD,
               variables: { id: boardId },
               data,
-            });
+            })
           },
         }),
     }),
   }),
   connect(),
-)(EditColumnModal);
+)(EditColumnModal)

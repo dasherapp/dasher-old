@@ -1,62 +1,62 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
-import Modal from 'react-modal';
-import { hideModal } from '../actions';
-import { USER_BOARDS } from './Boards';
+import React from 'react'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
+import Modal from 'react-modal'
+import { hideModal } from '../actions'
+import { USER_BOARDS } from './Boards'
 
-export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL';
+export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
-  state = { name: '' };
+  state = { name: '' }
 
   componentDidMount() {
-    const { boardId, data } = this.props;
+    const { boardId, data } = this.props
 
     if (boardId && !data.loading) {
-      this.initializeFormState(data.Board);
+      this.initializeFormState(data.Board)
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { boardId, data } = this.props;
+    const { boardId, data } = this.props
 
     if (boardId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.Board);
+      this.initializeFormState(data.Board)
     }
   }
 
-  initializeFormState = ({ name }) => this.setState({ name });
+  initializeFormState = ({ name }) => this.setState({ name })
 
   handleNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
+    this.setState({ name: event.target.value })
+  }
 
   handleClose = () => {
-    this.props.dispatch(hideModal());
-  };
+    this.props.dispatch(hideModal())
+  }
 
   handleSubmit = async event => {
-    const { boardId, userId, history, updateBoard, createBoard } = this.props;
-    const { name } = this.state;
+    const { boardId, userId, history, updateBoard, createBoard } = this.props
+    const { name } = this.state
 
-    event.preventDefault();
+    event.preventDefault()
 
     if (boardId) {
-      await updateBoard(boardId, name);
+      await updateBoard(boardId, name)
     } else {
-      const { data } = await createBoard(userId, name);
-      history.push(`/board/${data.createBoard.id}`);
+      const { data } = await createBoard(userId, name)
+      history.push(`/board/${data.createBoard.id}`)
     }
 
-    this.handleClose();
-  };
+    this.handleClose()
+  }
 
   render() {
-    const { boardId } = this.props;
-    const { name } = this.state;
+    const { boardId } = this.props
+    const { name } = this.state
 
     return (
       <Modal isOpen={true} onRequestClose={this.handleClose}>
@@ -72,7 +72,7 @@ class EditBoardModal extends React.Component {
           {boardId ? 'Save' : 'Create'}
         </button>
       </Modal>
-    );
+    )
   }
 }
 
@@ -83,7 +83,7 @@ const BOARD = gql`
       name
     }
   }
-`;
+`
 
 const UPDATE_BOARD = gql`
   mutation UpdateBoard($id: ID!, $name: String!) {
@@ -92,7 +92,7 @@ const UPDATE_BOARD = gql`
       name
     }
   }
-`;
+`
 
 const CREATE_BOARD = gql`
   mutation CreateBoard($userId: ID!, $name: String!) {
@@ -101,7 +101,7 @@ const CREATE_BOARD = gql`
       name
     }
   }
-`;
+`
 
 export default compose(
   withRouter,
@@ -123,12 +123,12 @@ export default compose(
         createBoardMutation({
           variables: { userId, name },
           update: (store, { data: { createBoard } }) => {
-            const data = store.readQuery({ query: USER_BOARDS });
-            data.user.boards.unshift(createBoard);
-            store.writeQuery({ query: USER_BOARDS, data });
+            const data = store.readQuery({ query: USER_BOARDS })
+            data.user.boards.unshift(createBoard)
+            store.writeQuery({ query: USER_BOARDS, data })
           },
         }),
     }),
   }),
   connect(),
-)(EditBoardModal);
+)(EditBoardModal)

@@ -1,27 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
 import {
   showEditBoardModal,
   showDeleteBoardModal,
   showEditColumnModal,
-} from '../actions';
-import NotFoundPage from './NotFoundPage';
-import AccountMenu from './AccountMenu';
+} from '../actions'
+import NotFoundPage from './NotFoundPage'
+import AccountMenu from './AccountMenu'
 
 const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
   if (userQuery.loading || boardQuery.loading) {
-    return <div>Loading</div>;
+    return <div>Loading</div>
   }
 
   if (!boardQuery.Board) {
-    return <NotFoundPage />;
+    return <NotFoundPage />
   }
 
   const isOwner =
-    userQuery.user && userQuery.user.id === boardQuery.Board.createdBy.id;
+    userQuery.user && userQuery.user.id === boardQuery.Board.createdBy.id
 
   return (
     <div>
@@ -70,8 +70,8 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export const BOARD = gql`
   query Board($id: ID!) {
@@ -87,7 +87,7 @@ export const BOARD = gql`
       }
     }
   }
-`;
+`
 
 const USER = gql`
   query User {
@@ -95,7 +95,7 @@ const USER = gql`
       id
     }
   }
-`;
+`
 
 export default compose(
   graphql(USER, {
@@ -107,4 +107,4 @@ export default compose(
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
   connect(),
-)(BoardPage);
+)(BoardPage)

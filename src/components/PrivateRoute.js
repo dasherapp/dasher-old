@@ -1,20 +1,20 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import React from 'react'
+import { Route, Redirect } from 'react-router-dom'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
 const PrivateRoute = ({ component: Component, data, ...rest }) => (
   <Route
     {...rest}
     render={props => {
       if (data.loading) {
-        return <div>Loading</div>;
+        return <div>Loading</div>
       }
 
-      return data.user ? <Component {...props} /> : <Redirect to="/login" />;
+      return data.user ? <Component {...props} /> : <Redirect to="/login" />
     }}
   />
-);
+)
 
 const USER = gql`
   query User {
@@ -22,8 +22,8 @@ const USER = gql`
       id
     }
   }
-`;
+`
 
 export default graphql(USER, {
   options: { fetchPolicy: 'network-only' },
-})(PrivateRoute);
+})(PrivateRoute)

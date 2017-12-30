@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
-import { showEditBoardModal, showDeleteBoardModal } from '../actions';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
+import { showEditBoardModal, showDeleteBoardModal } from '../actions'
 
 const Boards = ({ data, dispatch }) => (
   <div>
@@ -36,7 +36,7 @@ const Boards = ({ data, dispatch }) => (
       )}
     </ul>
   </div>
-);
+)
 
 export const USER_BOARDS = gql`
   query UserBoards {
@@ -48,6 +48,6 @@ export const USER_BOARDS = gql`
       }
     }
   }
-`;
+`
 
-export default compose(graphql(USER_BOARDS), connect())(Boards);
+export default compose(graphql(USER_BOARDS), connect())(Boards)

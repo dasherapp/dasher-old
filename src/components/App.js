@@ -1,13 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Apollo from './Apollo';
-import Store from './Store';
-import ModalRoot from './ModalRoot';
-import PrivateRoute from './PrivateRoute';
-import HomePage from './HomePage';
-import LoginPage from './LoginPage';
-import BoardPage from './BoardPage';
-import NotFoundPage from './NotFoundPage';
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Apollo from './Apollo'
+import Store from './Store'
+import ModalRoot from './ModalRoot'
+import PrivateRoute from './PrivateRoute'
+import HomePage from './HomePage'
+import LoginPage from './LoginPage'
+import BoardPage from './BoardPage'
+import NotFoundPage from './NotFoundPage'
 
 const App = () => (
   <Apollo>
@@ -25,6 +25,6 @@ const App = () => (
       </Router>
     </Store>
   </Apollo>
-);
+)
 
-export default App;
+export default App

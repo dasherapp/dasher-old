@@ -1,24 +1,24 @@
-import React from 'react';
-import { graphql, compose } from 'react-apollo';
-import gql from 'graphql-tag';
-import { withRouter, Link } from 'react-router-dom';
-import { GRAPHCOOL_TOKEN_KEY } from '../constants';
+import React from 'react'
+import { graphql, compose } from 'react-apollo'
+import gql from 'graphql-tag'
+import { withRouter, Link } from 'react-router-dom'
+import { GRAPHCOOL_TOKEN_KEY } from '../constants'
 
 class AccountMenu extends React.Component {
   logOutUser = () => {
-    localStorage.removeItem(GRAPHCOOL_TOKEN_KEY);
-    this.props.history.push('/login');
-  };
+    localStorage.removeItem(GRAPHCOOL_TOKEN_KEY)
+    this.props.history.push('/login')
+  }
 
   render() {
-    const { data } = this.props;
+    const { data } = this.props
 
     if (data.loading) {
-      return <div>Loading</div>;
+      return <div>Loading</div>
     }
 
     if (data.user) {
-      const { name, username, avatarUrl } = data.user;
+      const { name, username, avatarUrl } = data.user
       return (
         <details>
           <summary>
@@ -29,10 +29,10 @@ class AccountMenu extends React.Component {
           <p>{username}</p>
           <button onClick={this.logOutUser}>Log out</button>
         </details>
-      );
+      )
     }
 
-    return <Link to="/login">Log in</Link>;
+    return <Link to="/login">Log in</Link>
   }
 }
 
@@ -45,9 +45,9 @@ const USER = gql`
       avatarUrl
     }
   }
-`;
+`
 
 export default compose(
   graphql(USER, { options: { fetchPolicy: 'network-only' } }),
   withRouter,
-)(AccountMenu);
+)(AccountMenu)
