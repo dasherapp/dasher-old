@@ -14,7 +14,7 @@ type Board @model {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  createdBy: User! @relation(name: "UserBoards")
+  owner: User! @relation(name: "UserBoards")
   columns: [Column!]! @relation(name: "BoardColumns")
 }
 
