@@ -7,6 +7,7 @@ import Modal from 'react-modal'
 
 import { hideModal } from '../actions'
 import { USER_BOARDS_QUERY } from './Boards'
+import Select from './Select'
 
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
@@ -29,15 +30,21 @@ class EditBoardModal extends React.Component {
     }
   }
 
-  initializeFormState = ({ name, repository }) =>
+  initializeFormState = ({ name, repository }) => {
     this.setState({ name, repository })
+  }
 
-  handleNameChange = event => this.setState({ name: event.target.value })
+  handleNameChange = event => {
+    this.setState({ name: event.target.value })
+  }
 
-  handleRepositoryChange = event =>
-    this.setState({ repository: event.target.value })
+  handleRepositoryChange = selectedItem => {
+    this.setState({ repository: selectedItem })
+  }
 
-  handleClose = () => this.props.dispatch(hideModal())
+  handleClose = () => {
+    this.props.dispatch(hideModal())
+  }
 
   handleSubmit = async event => {
     const { boardId, ownerId, history, updateBoard, createBoard } = this.props
@@ -73,11 +80,16 @@ class EditBoardModal extends React.Component {
           </label>
           <label>
             Repository
-            <input
-              value={repository}
+            <Select
+              items={[
+                'colebemis/tabio',
+                'feathericons/feather',
+                'colebemis/dasher',
+                'iFixit/toolbox',
+                'colebemis/colebemis.github.io',
+              ]}
+              selectedItem={repository}
               onChange={this.handleRepositoryChange}
-              disabled={data && data.loading}
-              required
             />
           </label>
         </form>
