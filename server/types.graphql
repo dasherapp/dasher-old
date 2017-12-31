@@ -14,6 +14,7 @@ type Board @model {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  repository: String!
   owner: User! @relation(name: "UserBoards")
   columns: [Column!]! @relation(name: "BoardColumns")
 }

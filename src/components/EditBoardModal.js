@@ -11,7 +11,7 @@ import { USER_BOARDS_QUERY } from './Boards'
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
-  state = { name: '' }
+  state = { name: '', repository: '' }
 
   componentDidMount() {
     const { boardId, data } = this.props
@@ -29,34 +29,34 @@ class EditBoardModal extends React.Component {
     }
   }
 
-  initializeFormState = ({ name }) => this.setState({ name })
+  initializeFormState = ({ name, repository }) =>
+    this.setState({ name, repository })
 
-  handleNameChange = event => {
-    this.setState({ name: event.target.value })
-  }
+  handleNameChange = event => this.setState({ name: event.target.value })
 
-  handleClose = () => {
-    this.props.dispatch(hideModal())
-  }
+  handleRepositoryChange = event =>
+    this.setState({ repository: event.target.value })
+
+  handleClose = () => this.props.dispatch(hideModal())
 
   handleSubmit = async event => {
     const { boardId, ownerId, history, updateBoard, createBoard } = this.props
-    const { name } = this.state
+    const { name, repository } = this.state
 
     event.preventDefault()
     this.handleClose()
 
     if (boardId) {
-      updateBoard(boardId, name)
+      updateBoard(boardId, name, repository)
     } else {
-      const { data } = await createBoard(ownerId, name)
+      const { data } = await createBoard(ownerId, name, repository)
       history.push(`/board/${data.createBoard.id}`)
     }
   }
 
   render() {
     const { boardId, data } = this.props
-    const { name } = this.state
+    const { name, repository } = this.state
 
     return (
       <Modal isOpen onRequestClose={this.handleClose}>
@@ -67,6 +67,15 @@ class EditBoardModal extends React.Component {
             <input
               value={name}
               onChange={this.handleNameChange}
+              disabled={data && data.loading}
+              required
+            />
+          </label>
+          <label>
+            Repository
+            <input
+              value={repository}
+              onChange={this.handleRepositoryChange}
               disabled={data && data.loading}
               required
             />
@@ -86,24 +95,27 @@ const BOARD_QUERY = gql`
     board: Board(id: $id) {
       id
       name
+      repository
     }
   }
 `
 
 const UPDATE_BOARD_MUTATION = gql`
-  mutation UpdateBoard($id: ID!, $name: String!) {
-    updateBoard(id: $id, name: $name) {
+  mutation UpdateBoard($id: ID!, $name: String!, $repository: String!) {
+    updateBoard(id: $id, name: $name, repository: $repository) {
       id
       name
+      repository
     }
   }
 `
 
 const CREATE_BOARD_MUATION = gql`
-  mutation CreateBoard($ownerId: ID!, $name: String!) {
-    createBoard(ownerId: $ownerId, name: $name) {
+  mutation CreateBoard($ownerId: ID!, $name: String!, $repository: String!) {
+    createBoard(ownerId: $ownerId, name: $name, repository: $repository) {
       id
       name
+      repository
     }
   }
 `
@@ -117,16 +129,16 @@ export default compose(
   graphql(UPDATE_BOARD_MUTATION, {
     name: 'updateBoardMutation',
     props: ({ updateBoardMutation }) => ({
-      updateBoard: (boardId, name) =>
-        updateBoardMutation({ variables: { id: boardId, name } }),
+      updateBoard: (boardId, name, repository) =>
+        updateBoardMutation({ variables: { id: boardId, name, repository } }),
     }),
   }),
   graphql(CREATE_BOARD_MUATION, {
     name: 'createBoardMutation',
     props: ({ createBoardMutation }) => ({
-      createBoard: (ownerId, name) =>
+      createBoard: (ownerId, name, repository) =>
         createBoardMutation({
-          variables: { ownerId, name },
+          variables: { ownerId, name, repository },
           update: (store, { data: { createBoard } }) => {
             const data = store.readQuery({ query: USER_BOARDS_QUERY })
             data.user.boards.unshift(createBoard)
