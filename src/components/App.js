@@ -18,8 +18,8 @@ const App = () => (
           <ModalRoot />
           <Switch>
             <PrivateRoute exact path="/" component={HomePage} />
+            <PrivateRoute path="/board/:id" component={BoardPage} />
             <Route exact path="/login" component={LoginPage} />
-            <Route path="/board/:id" component={BoardPage} />
             <Route component={NotFoundPage} />
           </Switch>
         </div>

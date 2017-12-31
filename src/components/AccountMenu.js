@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import { GRAPHCOOL_TOKEN } from '../constants'
 
@@ -33,7 +33,7 @@ class AccountMenu extends React.Component {
       )
     }
 
-    return <Link to="/login">Log in</Link>
+    return null
   }
 }
 
