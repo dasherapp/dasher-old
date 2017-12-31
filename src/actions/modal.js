@@ -1,6 +1,6 @@
-import { DELETE_BOARD_MODAL } from '../components/DeleteBoardModal'
 import { EDIT_BOARD_MODAL } from '../components/EditBoardModal'
 import { EDIT_COLUMN_MODAL } from '../components/EditColumnModal'
+import { DELETE_BOARD_MODAL } from '../components/DeleteBoardModal'
 
 export const SHOW_MODAL = 'SHOW_MODAL'
 export const HIDE_MODAL = 'HIDE_MODAL'
@@ -13,12 +13,12 @@ export function showEditBoardModal({ boardId, userId }) {
   return showModal(EDIT_BOARD_MODAL, { boardId, userId })
 }
 
-export function showDeleteBoardModal(boardId) {
-  return showModal(DELETE_BOARD_MODAL, { boardId })
-}
-
 export function showEditColumnModal({ columnId, boardId }) {
   return showModal(EDIT_COLUMN_MODAL, { columnId, boardId })
+}
+
+export function showDeleteBoardModal(boardId) {
+  return showModal(DELETE_BOARD_MODAL, { boardId })
 }
 
 export function hideModal() {

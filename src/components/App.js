@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
 import Apollo from './Apollo'
 import Store from './Store'
 import ModalRoot from './ModalRoot'

@@ -5,7 +5,7 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 import { hideModal } from '../actions'
-import { USER_BOARDS } from './Boards'
+import { USER_BOARDS_QUERY } from './Boards'
 
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
@@ -123,9 +123,9 @@ export default compose(
         createBoardMutation({
           variables: { userId, name },
           update: (store, { data: { createBoard } }) => {
-            const data = store.readQuery({ query: USER_BOARDS })
+            const data = store.readQuery({ query: USER_BOARDS_QUERY })
             data.user.boards.unshift(createBoard)
-            store.writeQuery({ query: USER_BOARDS, data })
+            store.writeQuery({ query: USER_BOARDS_QUERY, data })
           },
         }),
     }),

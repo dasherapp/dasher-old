@@ -4,14 +4,15 @@ import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-client-preset'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { GRAPHCOOL_TOKEN_KEY } from '../constants'
+
+import { GRAPHCOOL_TOKEN } from '../constants'
 
 const httpLink = new HttpLink({
   uri: 'https://api.graph.cool/simple/v1/cjbhufyy601sx0170z4w9rxw8',
 })
 
 const middlewareAuthLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem(GRAPHCOOL_TOKEN_KEY)
+  const token = localStorage.getItem(GRAPHCOOL_TOKEN)
   operation.setContext({
     headers: {
       authorization: token ? `Bearer ${token}` : null,

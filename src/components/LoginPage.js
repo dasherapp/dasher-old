@@ -3,7 +3,8 @@ import { Redirect } from 'react-router-dom'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import queryString from 'query-string'
-import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN_KEY } from '../constants'
+
+import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN } from '../constants'
 
 class LoginPage extends React.Component {
   state = { loading: false, error: '' }
@@ -22,7 +23,7 @@ class LoginPage extends React.Component {
 
       const { data } = await this.props.authenticateUser(githubCode)
 
-      localStorage.setItem(GRAPHCOOL_TOKEN_KEY, data.authenticateUser.token)
+      localStorage.setItem(GRAPHCOOL_TOKEN, data.authenticateUser.token)
 
       this.props.history.replace('/')
     } catch (error) {
@@ -73,15 +74,15 @@ class LoginPage extends React.Component {
   }
 }
 
-const USER = gql`
-  query User {
+const USER_ID_QUERY = gql`
+  query UserId {
     user {
       id
     }
   }
 `
 
-const AUTHENTICATE_USER = gql`
+const AUTHENTICATE_USER_MUTATION = gql`
   mutation AuthenticateUser($githubCode: String!) {
     authenticateUser(githubCode: $githubCode) {
       token
@@ -90,10 +91,10 @@ const AUTHENTICATE_USER = gql`
 `
 
 export default compose(
-  graphql(USER, {
+  graphql(USER_ID_QUERY, {
     options: { fetchPolicy: 'network-only' },
   }),
-  graphql(AUTHENTICATE_USER, {
+  graphql(AUTHENTICATE_USER_MUTATION, {
     props: ({ mutate }) => ({
       authenticateUser: githubCode => mutate({ variables: { githubCode } }),
     }),

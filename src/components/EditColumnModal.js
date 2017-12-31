@@ -4,7 +4,7 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 import { hideModal } from '../actions'
-import { BOARD } from './BoardPage'
+import { BOARD_QUERY } from './BoardPage'
 
 export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL'
 
@@ -23,7 +23,7 @@ class EditColumnModal extends React.Component {
     const { columnId, data } = this.props
 
     if (columnId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.Column)
+      this.initializeFormState(data.column)
     }
   }
 
@@ -57,7 +57,7 @@ class EditColumnModal extends React.Component {
     const { name } = this.state
 
     return (
-      <Modal isOpen={true} onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={this.handleClose}>
         <div>
           <h1>{columnId ? 'Edit column' : 'Add column'}</h1>
           <form id="edit-column" onSubmit={this.handleSubmit}>
@@ -76,16 +76,16 @@ class EditColumnModal extends React.Component {
   }
 }
 
-const COLUMN = gql`
+const COLUMN_QUERY = gql`
   query Column($id: ID!) {
-    Column(id: $id) {
+    column: Column(id: $id) {
       id
       name
     }
   }
 `
 
-const UPDATE_COLUMN = gql`
+const UPDATE_COLUMN_MUTATION = gql`
   mutation UpdateColumn($id: ID!, $name: String!) {
     updateColumn(id: $id, name: $name) {
       id
@@ -94,7 +94,7 @@ const UPDATE_COLUMN = gql`
   }
 `
 
-const CREATE_COLUMN = gql`
+const CREATE_COLUMN_MUTATION = gql`
   mutation CreateColumn($boardId: ID!, $name: String!) {
     createColumn(boardId: $boardId, name: $name) {
       id
@@ -104,18 +104,18 @@ const CREATE_COLUMN = gql`
 `
 
 export default compose(
-  graphql(COLUMN, {
+  graphql(COLUMN_QUERY, {
     options: ({ columnId }) => ({ variables: { id: columnId } }),
     skip: ({ columnId }) => !columnId,
   }),
-  graphql(UPDATE_COLUMN, {
+  graphql(UPDATE_COLUMN_MUTATION, {
     name: 'updateColumnMutation',
     props: ({ updateColumnMutation }) => ({
       updateColumn: (columnId, name) =>
         updateColumnMutation({ variables: { id: columnId, name } }),
     }),
   }),
-  graphql(CREATE_COLUMN, {
+  graphql(CREATE_COLUMN_MUTATION, {
     name: 'createColumnMutation',
     props: ({ createColumnMutation }) => ({
       createColumn: (boardId, name) =>
@@ -123,12 +123,12 @@ export default compose(
           variables: { boardId, name },
           update: (store, { data: { createColumn } }) => {
             const data = store.readQuery({
-              query: BOARD,
+              query: BOARD_QUERY,
               variables: { id: boardId },
             })
-            data.Board.columns.push(createColumn)
+            data.board.columns.push(createColumn)
             store.writeQuery({
-              query: BOARD,
+              query: BOARD_QUERY,
               variables: { id: boardId },
               data,
             })

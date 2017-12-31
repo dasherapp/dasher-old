@@ -2,11 +2,12 @@ import React from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { withRouter, Link } from 'react-router-dom'
-import { GRAPHCOOL_TOKEN_KEY } from '../constants'
+
+import { GRAPHCOOL_TOKEN } from '../constants'
 
 class AccountMenu extends React.Component {
   logOutUser = () => {
-    localStorage.removeItem(GRAPHCOOL_TOKEN_KEY)
+    localStorage.removeItem(GRAPHCOOL_TOKEN)
     this.props.history.push('/login')
   }
 
@@ -36,7 +37,7 @@ class AccountMenu extends React.Component {
   }
 }
 
-const USER = gql`
+const USER_QUERY = gql`
   query User {
     user {
       id
@@ -48,6 +49,6 @@ const USER = gql`
 `
 
 export default compose(
-  graphql(USER, { options: { fetchPolicy: 'network-only' } }),
   withRouter,
+  graphql(USER_QUERY, { options: { fetchPolicy: 'network-only' } }),
 )(AccountMenu)

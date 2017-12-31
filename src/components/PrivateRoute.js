@@ -16,7 +16,7 @@ const PrivateRoute = ({ component: Component, data, ...rest }) => (
   />
 )
 
-const USER = gql`
+const USER_ID_QUERY = gql`
   query User {
     user {
       id
@@ -24,6 +24,6 @@ const USER = gql`
   }
 `
 
-export default graphql(USER, {
+export default graphql(USER_ID_QUERY, {
   options: { fetchPolicy: 'network-only' },
 })(PrivateRoute)

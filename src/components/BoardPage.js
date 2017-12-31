@@ -3,52 +3,50 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+
 import {
   showEditBoardModal,
-  showDeleteBoardModal,
   showEditColumnModal,
+  showDeleteBoardModal,
 } from '../actions'
 import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
 
-const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
-  if (userQuery.loading || boardQuery.loading) {
+const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
+  if (userIdQuery.loading || boardQuery.loading) {
     return <div>Loading</div>
   }
 
-  if (!boardQuery.Board) {
+  if (!boardQuery.board) {
     return <NotFoundPage />
   }
 
-  const isOwner =
-    userQuery.user && userQuery.user.id === boardQuery.Board.createdBy.id
+  const { user } = userIdQuery
+  const { board } = boardQuery
+  const isOwner = user && user.id === board.createdBy.id
 
   return (
     <div>
       <AccountMenu />
       <Link to="/">Back</Link>
       <div>
-        <h1>{boardQuery.Board.name}</h1>
+        <h1>{board.name}</h1>
         {isOwner && (
           <div>
             <button
               onClick={() =>
-                dispatch(showEditBoardModal({ boardId: boardQuery.Board.id }))
+                dispatch(showEditBoardModal({ boardId: board.id }))
               }
             >
               Edit
             </button>
-            <button
-              onClick={() =>
-                dispatch(showDeleteBoardModal(boardQuery.Board.id))
-              }
-            >
+            <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>
               Delete
             </button>
           </div>
         )}
         <ul>
-          {boardQuery.Board.columns.map(column => (
+          {board.columns.map(column => (
             <li key={column.id}>
               {column.name}
               <button
@@ -62,9 +60,7 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
           ))}
         </ul>
         <button
-          onClick={() =>
-            dispatch(showEditColumnModal({ boardId: boardQuery.Board.id }))
-          }
+          onClick={() => dispatch(showEditColumnModal({ boardId: board.id }))}
         >
           Add column
         </button>
@@ -73,9 +69,17 @@ const BoardPage = ({ match, userQuery, boardQuery, dispatch }) => {
   )
 }
 
-export const BOARD = gql`
+const USER_ID_QUERY = gql`
+  query UserId {
+    user {
+      id
+    }
+  }
+`
+
+export const BOARD_QUERY = gql`
   query Board($id: ID!) {
-    Board(id: $id) {
+    board: Board(id: $id) {
       id
       name
       createdBy {
@@ -89,20 +93,12 @@ export const BOARD = gql`
   }
 `
 
-const USER = gql`
-  query User {
-    user {
-      id
-    }
-  }
-`
-
 export default compose(
-  graphql(USER, {
-    name: 'userQuery',
+  graphql(USER_ID_QUERY, {
+    name: 'userIdQuery',
     options: { fetchPolicy: 'network-only' },
   }),
-  graphql(BOARD, {
+  graphql(BOARD_QUERY, {
     name: 'boardQuery',
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
