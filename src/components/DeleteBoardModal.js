@@ -50,7 +50,7 @@ const BOARD_QUERY = gql`
   }
 `
 
-const DELETE_BOARD_QUERY = gql`
+const DELETE_BOARD_MUTATION = gql`
   mutation DeleteBoard($id: ID!) {
     deleteBoard(id: $id) {
       id
@@ -63,7 +63,7 @@ export default compose(
   graphql(BOARD_QUERY, {
     options: ({ boardId }) => ({ variables: { id: boardId } }),
   }),
-  graphql(DELETE_BOARD_QUERY, {
+  graphql(DELETE_BOARD_MUTATION, {
     props: ({ mutate }) => ({
       deleteBoard: boardId =>
         mutate({

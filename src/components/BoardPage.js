@@ -23,7 +23,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
 
   const { user } = userIdQuery
   const { board } = boardQuery
-  const isOwner = user && user.id === board.createdBy.id
+  const isOwner = user && user.id === board.owner.id
 
   return (
     <div>
@@ -82,7 +82,7 @@ export const BOARD_QUERY = gql`
     board: Board(id: $id) {
       id
       name
-      createdBy {
+      owner {
         id
       }
       columns(orderBy: updatedAt_DESC) {

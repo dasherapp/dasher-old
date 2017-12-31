@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
+
 import { hideModal } from '../actions'
 import { USER_BOARDS_QUERY } from './Boards'
 
@@ -16,7 +17,7 @@ class EditBoardModal extends React.Component {
     const { boardId, data } = this.props
 
     if (boardId && !data.loading) {
-      this.initializeFormState(data.Board)
+      this.initializeFormState(data.board)
     }
   }
 
@@ -24,7 +25,7 @@ class EditBoardModal extends React.Component {
     const { boardId, data } = this.props
 
     if (boardId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.Board)
+      this.initializeFormState(data.board)
     }
   }
 
@@ -39,7 +40,7 @@ class EditBoardModal extends React.Component {
   }
 
   handleSubmit = async event => {
-    const { boardId, userId, history, updateBoard, createBoard } = this.props
+    const { boardId, ownerId, history, updateBoard, createBoard } = this.props
     const { name } = this.state
 
     event.preventDefault()
@@ -47,7 +48,7 @@ class EditBoardModal extends React.Component {
     if (boardId) {
       await updateBoard(boardId, name)
     } else {
-      const { data } = await createBoard(userId, name)
+      const { data } = await createBoard(ownerId, name)
       history.push(`/board/${data.createBoard.id}`)
     }
 
@@ -59,7 +60,7 @@ class EditBoardModal extends React.Component {
     const { name } = this.state
 
     return (
-      <Modal isOpen={true} onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={this.handleClose}>
         <h1>{boardId ? 'Edit board' : 'New board'}</h1>
         <form id="edit-board" onSubmit={this.handleSubmit}>
           <label>
@@ -76,16 +77,16 @@ class EditBoardModal extends React.Component {
   }
 }
 
-const BOARD = gql`
+const BOARD_QUERY = gql`
   query Board($id: ID!) {
-    Board(id: $id) {
+    board: Board(id: $id) {
       id
       name
     }
   }
 `
 
-const UPDATE_BOARD = gql`
+const UPDATE_BOARD_MUTATION = gql`
   mutation UpdateBoard($id: ID!, $name: String!) {
     updateBoard(id: $id, name: $name) {
       id
@@ -94,9 +95,9 @@ const UPDATE_BOARD = gql`
   }
 `
 
-const CREATE_BOARD = gql`
-  mutation CreateBoard($userId: ID!, $name: String!) {
-    createBoard(createdById: $userId, name: $name) {
+const CREATE_BOARD_MUATION = gql`
+  mutation CreateBoard($ownerId: ID!, $name: String!) {
+    createBoard(ownerId: $ownerId, name: $name) {
       id
       name
     }
@@ -105,23 +106,23 @@ const CREATE_BOARD = gql`
 
 export default compose(
   withRouter,
-  graphql(BOARD, {
+  graphql(BOARD_QUERY, {
     options: ({ boardId }) => ({ variables: { id: boardId } }),
     skip: ({ boardId }) => !boardId,
   }),
-  graphql(UPDATE_BOARD, {
+  graphql(UPDATE_BOARD_MUTATION, {
     name: 'updateBoardMutation',
     props: ({ updateBoardMutation }) => ({
       updateBoard: (boardId, name) =>
         updateBoardMutation({ variables: { id: boardId, name } }),
     }),
   }),
-  graphql(CREATE_BOARD, {
+  graphql(CREATE_BOARD_MUATION, {
     name: 'createBoardMutation',
     props: ({ createBoardMutation }) => ({
-      createBoard: (userId, name) =>
+      createBoard: (ownerId, name) =>
         createBoardMutation({
-          variables: { userId, name },
+          variables: { ownerId, name },
           update: (store, { data: { createBoard } }) => {
             const data = store.readQuery({ query: USER_BOARDS_QUERY })
             data.user.boards.unshift(createBoard)

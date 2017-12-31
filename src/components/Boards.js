@@ -10,7 +10,7 @@ const Boards = ({ data, dispatch }) => (
   <div>
     <h1>Boards</h1>
     <button
-      onClick={() => dispatch(showEditBoardModal({ userId: data.user.id }))}
+      onClick={() => dispatch(showEditBoardModal({ ownerId: data.user.id }))}
     >
       New board
     </button>

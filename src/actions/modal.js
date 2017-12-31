@@ -9,8 +9,8 @@ export function showModal(modalType, modalProps) {
   return { type: SHOW_MODAL, modalType, modalProps }
 }
 
-export function showEditBoardModal({ boardId, userId }) {
-  return showModal(EDIT_BOARD_MODAL, { boardId, userId })
+export function showEditBoardModal({ boardId, ownerId }) {
+  return showModal(EDIT_BOARD_MODAL, { boardId, ownerId })
 }
 
 export function showEditColumnModal({ columnId, boardId }) {
