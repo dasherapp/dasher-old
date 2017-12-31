@@ -15,7 +15,7 @@ class EditColumnModal extends React.Component {
     const { columnId, data } = this.props
 
     if (columnId && !data.loading) {
-      this.initializeFormState(data.Column)
+      this.initializeFormState(data.column)
     }
   }
 
