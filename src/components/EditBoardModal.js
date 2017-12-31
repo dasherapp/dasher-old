@@ -44,19 +44,18 @@ class EditBoardModal extends React.Component {
     const { name } = this.state
 
     event.preventDefault()
+    this.handleClose()
 
     if (boardId) {
-      await updateBoard(boardId, name)
+      updateBoard(boardId, name)
     } else {
       const { data } = await createBoard(ownerId, name)
       history.push(`/board/${data.createBoard.id}`)
     }
-
-    this.handleClose()
   }
 
   render() {
-    const { boardId } = this.props
+    const { boardId, data } = this.props
     const { name } = this.state
 
     return (
@@ -65,11 +64,16 @@ class EditBoardModal extends React.Component {
         <form id="edit-board" onSubmit={this.handleSubmit}>
           <label>
             Name
-            <input value={name} onChange={this.handleNameChange} required />
+            <input
+              value={name}
+              onChange={this.handleNameChange}
+              disabled={data && data.loading}
+              required
+            />
           </label>
         </form>
         <button onClick={this.handleClose}>Cancel</button>
-        <button type="submit" form="edit-board">
+        <button type="submit" form="edit-board" disabled={data && data.loading}>
           {boardId ? 'Save' : 'Create'}
         </button>
       </Modal>

@@ -37,23 +37,22 @@ class EditColumnModal extends React.Component {
     this.props.dispatch(hideModal())
   }
 
-  handleSubmit = async event => {
+  handleSubmit = event => {
     const { columnId, boardId, updateColumn, createColumn } = this.props
     const { name } = this.state
 
     event.preventDefault()
+    this.handleClose()
 
     if (columnId) {
-      await updateColumn(columnId, name)
+      updateColumn(columnId, name)
     } else {
-      await createColumn(boardId, name)
+      createColumn(boardId, name)
     }
-
-    this.handleClose()
   }
 
   render() {
-    const { columnId } = this.props
+    const { columnId, data } = this.props
     const { name } = this.state
 
     return (
@@ -63,11 +62,20 @@ class EditColumnModal extends React.Component {
           <form id="edit-column" onSubmit={this.handleSubmit}>
             <label>
               Name
-              <input value={name} onChange={this.handleNameChange} required />
+              <input
+                value={name}
+                onChange={this.handleNameChange}
+                disabled={data && data.loading}
+                required
+              />
             </label>
           </form>
           <button onClick={this.handleClose}>Cancel</button>
-          <button type="submit" form="edit-column">
+          <button
+            type="submit"
+            form="edit-column"
+            disabled={data && data.loading}
+          >
             {columnId ? 'Save' : 'Create'}
           </button>
         </div>
