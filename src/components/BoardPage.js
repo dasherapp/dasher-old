@@ -31,6 +31,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
       <Link to="/">Back</Link>
       <div>
         <h1>{board.name}</h1>
+        <p>{board.repository}</p>
         {isOwner && (
           <div>
             <button
@@ -82,6 +83,7 @@ export const BOARD_QUERY = gql`
     board: Board(id: $id) {
       id
       name
+      repository
       owner {
         id
       }

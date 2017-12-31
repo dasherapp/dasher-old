@@ -71,12 +71,14 @@ class EditBoardModal extends React.Component {
         <form id="edit-board" onSubmit={this.handleSubmit}>
           <label>
             Name
-            <input
-              value={name}
-              onChange={this.handleNameChange}
-              disabled={data && data.loading}
-              required
-            />
+            <div>
+              <input
+                value={name}
+                onChange={this.handleNameChange}
+                disabled={data && data.loading}
+                required
+              />
+            </div>
           </label>
           <label>
             Repository

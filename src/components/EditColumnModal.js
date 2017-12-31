@@ -62,12 +62,14 @@ class EditColumnModal extends React.Component {
           <form id="edit-column" onSubmit={this.handleSubmit}>
             <label>
               Name
-              <input
-                value={name}
-                onChange={this.handleNameChange}
-                disabled={data && data.loading}
-                required
-              />
+              <div>
+                <input
+                  value={name}
+                  onChange={this.handleNameChange}
+                  disabled={data && data.loading}
+                  required
+                />
+              </div>
             </label>
           </form>
           <button onClick={this.handleClose}>Cancel</button>

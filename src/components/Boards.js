@@ -21,7 +21,9 @@ const Boards = ({ data, dispatch }) => (
         data.user &&
         data.user.boards.map(board => (
           <li key={board.id}>
-            <Link to={`/board/${board.id}`}>{board.name}</Link>
+            <Link to={`/board/${board.id}`}>
+              {board.name} ({board.repository})
+            </Link>
             <button
               onClick={() =>
                 dispatch(showEditBoardModal({ boardId: board.id }))
@@ -46,6 +48,7 @@ export const USER_BOARDS_QUERY = gql`
       boards(orderBy: updatedAt_DESC) {
         id
         name
+        repository
       }
     }
   }
