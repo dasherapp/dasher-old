@@ -8,6 +8,7 @@ import {
   showEditBoardModal,
   showEditColumnModal,
   showDeleteBoardModal,
+  showDeleteColumnModal,
 } from '../actions'
 import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
@@ -36,8 +37,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
           <div>
             <button
               onClick={() =>
-                dispatch(showEditBoardModal({ boardId: board.id }))
-              }
+                dispatch(showEditBoardModal({ boardId: board.id }))}
             >
               Edit
             </button>
@@ -52,10 +52,14 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
               {column.name}
               <button
                 onClick={() =>
-                  dispatch(showEditColumnModal({ columnId: column.id }))
-                }
+                  dispatch(showEditColumnModal({ columnId: column.id }))}
               >
                 Edit
+              </button>
+              <button
+                onClick={() => dispatch(showDeleteColumnModal(column.id))}
+              >
+                Delete
               </button>
             </li>
           ))}
