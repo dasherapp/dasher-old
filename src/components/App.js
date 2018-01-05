@@ -14,7 +14,7 @@ const App = () => (
   <Apollo>
     <Store>
       <Router>
-        <div>
+        <React.Fragment>
           <ModalRoot />
           <Switch>
             <PrivateRoute exact path="/" component={HomePage} />
@@ -22,7 +22,7 @@ const App = () => (
             <Route exact path="/login" component={LoginPage} />
             <Route component={NotFoundPage} />
           </Switch>
-        </div>
+        </React.Fragment>
       </Router>
     </Store>
   </Apollo>
