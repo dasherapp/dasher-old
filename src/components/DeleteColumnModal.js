@@ -26,8 +26,8 @@ class DeleteColumnModal extends React.Component {
           <div>
             <h1>Delete Column</h1>
             <p>
-              Are you sure you want to delete this column? This action cannot be
-              undone.
+              Are you sure you want to delete{' '}
+              <strong>{data.column.name}</strong>? This action cannot be undone.
             </p>
             <button onClick={this.handleClose}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
