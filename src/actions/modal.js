@@ -18,7 +18,7 @@ export function showEditColumnModal({ columnId, boardId }) {
   return showModal(EDIT_COLUMN_MODAL, { columnId, boardId })
 }
 
-export function showDeleteBoardModal(boardId) {
+export function showDeleteBoardModal({ boardId }) {
   return showModal(DELETE_BOARD_MODAL, { boardId })
 }
 

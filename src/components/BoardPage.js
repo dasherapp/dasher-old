@@ -37,11 +37,16 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
           <div>
             <button
               onClick={() =>
-                dispatch(showEditBoardModal({ boardId: board.id }))}
+                dispatch(showEditBoardModal({ boardId: board.id }))
+              }
             >
               Edit
             </button>
-            <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>
+            <button
+              onClick={() =>
+                dispatch(showDeleteBoardModal({ boardId: board.id }))
+              }
+            >
               Delete
             </button>
           </div>
@@ -52,7 +57,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
               {column.name}
               <button
                 onClick={() =>
-                  dispatch(showEditColumnModal({ columnId: column.id }))}
+                  dispatch(showEditColumnModal({ columnId: column.id }))
+                }
               >
                 Edit
               </button>
@@ -63,7 +69,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
                       boardId: board.id,
                       columnId: column.id,
                     }),
-                  )}
+                  )
+                }
               >
                 Delete
               </button>
