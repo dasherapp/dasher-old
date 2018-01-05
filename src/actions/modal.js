@@ -22,8 +22,8 @@ export function showDeleteBoardModal(boardId) {
   return showModal(DELETE_BOARD_MODAL, { boardId })
 }
 
-export function showDeleteColumnModal(columnId) {
-  return showModal(DELETE_COLUMN_MODAL, { columnId })
+export function showDeleteColumnModal({ boardId, columnId }) {
+  return showModal(DELETE_COLUMN_MODAL, { boardId, columnId })
 }
 
 export function hideModal() {

@@ -4,6 +4,7 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 import { hideModal } from '../actions'
+import { BOARD_QUERY } from './BoardPage'
 
 export const DELETE_COLUMN_MODAL = 'DELETE_COLUMN_MODAL'
 
@@ -62,9 +63,27 @@ export default compose(
   }),
   graphql(DELETE_COLUMN_MUTATION, {
     name: 'deleteColumnMutation',
-    props: ({ deleteColumnMutation }) => ({
+    props: ({ deleteColumnMutation, ownProps }) => ({
       deleteColumn: columnId =>
-        deleteColumnMutation({ variables: { id: columnId } }),
+        deleteColumnMutation({
+          variables: { id: columnId },
+          update: (store, { data: { deleteColumn } }) => {
+            const data = store.readQuery({
+              query: BOARD_QUERY,
+              variables: { id: ownProps.boardId },
+            })
+
+            data.board.columns = data.board.columns.filter(
+              column => column.id !== deleteColumn.id,
+            )
+
+            store.writeQuery({
+              query: BOARD_QUERY,
+              variables: { id: ownProps.boardId },
+              data,
+            })
+          },
+        }),
     }),
   }),
   connect(),

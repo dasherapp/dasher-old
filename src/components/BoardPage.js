@@ -57,7 +57,13 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
                 Edit
               </button>
               <button
-                onClick={() => dispatch(showDeleteColumnModal(column.id))}
+                onClick={() =>
+                  dispatch(
+                    showDeleteColumnModal({
+                      boardId: board.id,
+                      columnId: column.id,
+                    }),
+                  )}
               >
                 Delete
               </button>
