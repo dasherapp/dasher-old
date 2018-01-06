@@ -4,7 +4,7 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import queryString from 'query-string'
 
-import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN } from '../constants'
+import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class LoginPage extends React.Component {
   state = { loading: false, error: '' }
@@ -23,7 +23,11 @@ class LoginPage extends React.Component {
 
       const { data } = await this.props.authenticateUser(githubCode)
 
-      localStorage.setItem(GRAPHCOOL_TOKEN, data.authenticateUser.token)
+      localStorage.setItem(
+        GRAPHCOOL_TOKEN,
+        data.authenticateUser.graphcoolToken,
+      )
+      localStorage.setItem(GITHUB_TOKEN, data.authenticateUser.githubToken)
 
       this.props.history.replace('/')
     } catch (error) {
@@ -85,7 +89,8 @@ const USER_ID_QUERY = gql`
 const AUTHENTICATE_USER_MUTATION = gql`
   mutation AuthenticateUser($githubCode: String!) {
     authenticateUser(githubCode: $githubCode) {
-      token
+      graphcoolToken
+      githubToken
     }
   }
 `

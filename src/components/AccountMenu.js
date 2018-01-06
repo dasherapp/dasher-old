@@ -3,11 +3,12 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { withRouter } from 'react-router-dom'
 
-import { GRAPHCOOL_TOKEN } from '../constants'
+import { GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class AccountMenu extends React.Component {
   logOutUser = () => {
     localStorage.removeItem(GRAPHCOOL_TOKEN)
+    localStorage.removeItem(GITHUB_TOKEN)
     this.props.history.push('/login')
   }
 
