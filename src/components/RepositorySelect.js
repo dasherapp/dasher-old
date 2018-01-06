@@ -13,6 +13,11 @@ class RepositorySelect extends React.Component {
 
   getItems = value => {
     const { repositories } = this.state
+
+    if (!value) {
+      return repositories.map(this.repositoryToString)
+    }
+
     const options = {
       threshold: 0.3,
       keys: ['nameWithOwner'],
