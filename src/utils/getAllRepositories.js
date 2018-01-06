@@ -12,10 +12,7 @@ const repositoriesQuery = `
         edges {
           cursor
           node {
-            name
-            owner {
-              login
-            }
+            nameWithOwner
           }
         }
       }
