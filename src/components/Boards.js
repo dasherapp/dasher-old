@@ -31,7 +31,11 @@ const Boards = ({ data, dispatch }) => (
             >
               Edit
             </button>
-            <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>
+            <button
+              onClick={() =>
+                dispatch(showDeleteBoardModal({ boardId: board.id }))
+              }
+            >
               Delete
             </button>
           </li>

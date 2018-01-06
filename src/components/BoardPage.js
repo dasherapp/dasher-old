@@ -34,17 +34,22 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
         <h1>{board.name}</h1>
         <p>{board.repository}</p>
         {isOwner && (
-          <div>
+          <React.Fragment>
             <button
               onClick={() =>
-                dispatch(showEditBoardModal({ boardId: board.id }))}
+                dispatch(showEditBoardModal({ boardId: board.id }))
+              }
             >
               Edit
             </button>
-            <button onClick={() => dispatch(showDeleteBoardModal(board.id))}>
+            <button
+              onClick={() =>
+                dispatch(showDeleteBoardModal({ boardId: board.id }))
+              }
+            >
               Delete
             </button>
-          </div>
+          </React.Fragment>
         )}
         <ul>
           {board.columns.map(column => (
@@ -52,7 +57,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
               {column.name} ({column.index}, {column.query})
               <button
                 onClick={() =>
-                  dispatch(showEditColumnModal({ columnId: column.id }))}
+                  dispatch(showEditColumnModal({ columnId: column.id }))
+                }
               >
                 Edit
               </button>
@@ -63,7 +69,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
                       boardId: board.id,
                       columnId: column.id,
                     }),
-                  )}
+                  )
+                }
               >
                 Delete
               </button>

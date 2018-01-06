@@ -24,15 +24,15 @@ class DeleteColumnModal extends React.Component {
         {data.loading ? (
           <div>Loading</div>
         ) : (
-          <div>
-            <h1>Delete Column</h1>
+          <React.Fragment>
+            <h1>Delete column</h1>
             <p>
               Are you sure you want to delete{' '}
               <strong>{data.column.name}</strong>? This action cannot be undone.
             </p>
             <button onClick={this.handleClose}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
-          </div>
+          </React.Fragment>
         )}
       </Modal>
     )

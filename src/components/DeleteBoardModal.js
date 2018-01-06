@@ -27,7 +27,7 @@ class DeleteBoardModal extends React.Component {
         {data.loading ? (
           <div>Loading</div>
         ) : (
-          <div>
+          <React.Fragment>
             <h1>Delete board</h1>
             <p>
               Are you sure you want to delete <strong>{data.board.name}</strong>?
@@ -35,7 +35,7 @@ class DeleteBoardModal extends React.Component {
             </p>
             <button onClick={this.handleClose}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
-          </div>
+          </React.Fragment>
         )}
       </Modal>
     )

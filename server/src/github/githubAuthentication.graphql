@@ -1,6 +1,7 @@
 type AuthenticateUserPayload {
   id: ID!
-  token: String!
+  graphcoolToken: String!
+  githubToken: String!
 }
 
 extend type Mutation {

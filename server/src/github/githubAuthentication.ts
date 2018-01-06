@@ -68,9 +68,9 @@ export default async (event: FunctionEvent<EventData>) => {
     }
 
     // generate node token for User node
-    const token = await graphcool.generateNodeToken(userId!, 'User')
+    const graphcoolToken = await graphcool.generateNodeToken(userId!, 'User')
 
-    return { data: { id: userId, token } }
+    return { data: { id: userId, graphcoolToken, githubToken } }
   } catch (e) {
     console.log(e)
     return { error: 'An unexpected error occured during authentication.' }
