@@ -22,7 +22,6 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
     return <NotFoundPage />
   }
 
-  var foo
   const { user } = userIdQuery
   const { board } = boardQuery
   const isOwner = user && user.id === board.owner.id

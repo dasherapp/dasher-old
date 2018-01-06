@@ -14,15 +14,14 @@ class RepositorySelect extends React.Component {
   getItems = value => {
     const { repositories } = this.state
     const options = {
-      threshold: 0.4,
-      keys: [
-        { name: 'name', weight: 0.7 },
-        { name: 'owner.login', weight: 0.3 },
-      ],
+      threshold: 0.3,
+      keys: ['nameWithOwner'],
     }
     const fuse = new Fuse(repositories, options)
-    return fuse.search(value).map(({ owner, name }) => `${owner.login}/${name}`)
+    return fuse.search(value).map(this.repositoryToString)
   }
+
+  repositoryToString = repository => repository.nameWithOwner
 
   render() {
     return (
