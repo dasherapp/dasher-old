@@ -49,7 +49,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
         <ul>
           {board.columns.map(column => (
             <li key={column.id}>
-              {column.name}
+              {column.name} ({column.index}, {column.query})
               <button
                 onClick={() =>
                   dispatch(showEditColumnModal({ columnId: column.id }))}
@@ -71,7 +71,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
           ))}
         </ul>
         <button
-          onClick={() => dispatch(showEditColumnModal({ boardId: board.id }))}
+          onClick={() => dispatch(showEditColumnModal({ boardId: board.id, index: board.columns.length }))}
         >
           Add column
         </button>
@@ -97,9 +97,11 @@ export const BOARD_QUERY = gql`
       owner {
         id
       }
-      columns(orderBy: updatedAt_DESC) {
+      columns(orderBy: index_ASC) {
         id
         name
+        index
+        query
       }
     }
   }

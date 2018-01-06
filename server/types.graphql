@@ -25,4 +25,6 @@ type Column @model {
   updatedAt: DateTime!
   name: String!
   board: Board! @relation(name: "BoardColumns")
+  query: String! @migrationValue(value: "No query yet")
+  index: Int! @migrationValue(value: 0)
 }
