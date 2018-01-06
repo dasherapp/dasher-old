@@ -47,6 +47,7 @@ class LoginPage extends React.Component {
 
     const query = queryString.stringify({
       client_id: GITHUB_CLIENT_ID,
+      scope: 'repo',
       redirect_uri: callbackUrl,
     })
 
