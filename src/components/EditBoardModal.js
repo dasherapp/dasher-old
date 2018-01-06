@@ -6,23 +6,20 @@ import gql from 'graphql-tag'
 import Modal from 'react-modal'
 
 import { hideModal } from '../actions'
-import getAllRepositories from '../utils/getAllRepositories'
 import { USER_BOARDS_QUERY } from './Boards'
-import Select from './Select'
+import RepositorySelect from './RepositorySelect'
 
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
   state = { name: '', repository: '', repositories: [] }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { boardId, data } = this.props
 
     if (boardId && !data.loading) {
       this.initializeFormState(data.board)
     }
-
-    this.setState({ repositories: await getAllRepositories() })
   }
 
   componentDidUpdate(prevProps) {
@@ -41,8 +38,8 @@ class EditBoardModal extends React.Component {
     this.setState({ name: event.target.value })
   }
 
-  handleRepositoryChange = selectedItem => {
-    this.setState({ repository: selectedItem })
+  handleRepositoryChange = value => {
+    this.setState({ repository: value })
   }
 
   handleClose = () => {
@@ -85,9 +82,8 @@ class EditBoardModal extends React.Component {
           </label>
           <label>
             Repository
-            <Select
-              items={this.state.repositories}
-              selectedItem={repository}
+            <RepositorySelect
+              value={repository}
               onChange={this.handleRepositoryChange}
             />
           </label>
