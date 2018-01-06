@@ -12,7 +12,10 @@ const repositoriesQuery = `
         edges {
           cursor
           node {
-            nameWithOwner
+            name
+            owner {
+              login
+            }
           }
         }
       }
@@ -31,7 +34,7 @@ async function getAllRepositories() {
     )
 
     allRepositories = allRepositories.concat(
-      repositories.edges.map(edge => edge.node.nameWithOwner),
+      repositories.edges.map(edge => edge.node),
     )
 
     totalCount = repositories.totalCount
