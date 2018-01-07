@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, object, shape, string } from 'prop-types'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
@@ -12,21 +13,37 @@ import RepositorySelect from './RepositorySelect'
 export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
+  static propTypes = {
+    dispatch: func.isRequired,
+    boardId: string,
+    boardQuery: shape({
+      loading: bool.isRequired,
+      board: object,
+    }),
+    ownerId: string,
+  }
+
+  static defaultProps = {
+    boardId: null,
+    boardQuery: null,
+    ownerId: null,
+  }
+
   state = { name: '', repository: '', repositories: [] }
 
   componentDidMount() {
-    const { boardId, data } = this.props
+    const { boardId, boardQuery } = this.props
 
-    if (boardId && !data.loading) {
-      this.initializeFormState(data.board)
+    if (boardId && !boardQuery.loading) {
+      this.initializeFormState(boardQuery.board)
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { boardId, data } = this.props
+    const { boardId, boardQuery } = this.props
 
-    if (boardId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.board)
+    if (boardId && prevProps.boardQuery.loading && !boardQuery.loading) {
+      this.initializeFormState(boardQuery.board)
     }
   }
 
@@ -62,7 +79,7 @@ class EditBoardModal extends React.Component {
   }
 
   render() {
-    const { boardId, data } = this.props
+    const { boardId, boardQuery } = this.props
     const { name, repository } = this.state
 
     return (
@@ -75,7 +92,7 @@ class EditBoardModal extends React.Component {
               <input
                 value={name}
                 onChange={this.handleNameChange}
-                disabled={data && data.loading}
+                disabled={boardQuery && boardQuery.loading}
                 required
               />
             </div>
@@ -89,7 +106,11 @@ class EditBoardModal extends React.Component {
           </label>
         </form>
         <button onClick={this.handleClose}>Cancel</button>
-        <button type="submit" form="edit-board" disabled={data && data.loading}>
+        <button
+          type="submit"
+          form="edit-board"
+          disabled={boardQuery && boardQuery.loading}
+        >
           {boardId ? 'Save' : 'Create'}
         </button>
       </Modal>
@@ -130,6 +151,7 @@ const CREATE_BOARD_MUATION = gql`
 export default compose(
   withRouter,
   graphql(BOARD_QUERY, {
+    name: 'boardQuery',
     options: ({ boardId }) => ({ variables: { id: boardId } }),
     skip: ({ boardId }) => !boardId,
   }),
