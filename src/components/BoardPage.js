@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, shape, object } from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
@@ -12,6 +13,18 @@ import {
 } from '../actions'
 import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
+
+const propTypes = {
+  boardQuery: shape({
+    loading: bool.isRequired,
+    board: object,
+  }).isRequired,
+  dispatch: func.isRequired,
+  userIdQuery: shape({
+    loading: bool.isRequired,
+    user: object,
+  }).isRequired,
+}
 
 const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
   if (userIdQuery.loading || boardQuery.loading) {
@@ -93,6 +106,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
     </div>
   )
 }
+
+BoardPage.propTypes = propTypes
 
 const USER_ID_QUERY = gql`
   query UserId {
