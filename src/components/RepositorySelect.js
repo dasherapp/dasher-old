@@ -19,6 +19,7 @@ class RepositorySelect extends React.Component {
   state = { repositories: [] }
 
   async componentDidMount() {
+    // TODO: cancel async/await when component is unmounted
     this.setState({ repositories: await getAllRepositories() })
   }
 
