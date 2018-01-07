@@ -2,6 +2,13 @@
   "name": "dasher",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "cypress": "cypress open"
+  },
   "dependencies": {
     "apollo-client-preset": "^1.0.5",
     "axios": "^0.17.1",
@@ -19,10 +26,7 @@
     "react-scripts": "1.0.17",
     "redux": "^3.7.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "cypress": "^1.4.1"
   }
 }
