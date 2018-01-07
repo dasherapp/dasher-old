@@ -1,5 +1,10 @@
 import React from 'react'
+import { func } from 'prop-types'
 import Downshift from 'downshift'
+
+const propTypes = {
+  getItems: func.isRequired,
+}
 
 const Select = ({ getItems, ...props }) => (
   <Downshift
@@ -39,5 +44,7 @@ const Select = ({ getItems, ...props }) => (
     )}
   />
 )
+
+Select.propTypes = propTypes
 
 export default Select
