@@ -78,7 +78,14 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
           ))}
         </ul>
         <button
-          onClick={() => dispatch(showEditColumnModal({ boardId: board.id, index: board.columns.length }))}
+          onClick={() =>
+            dispatch(
+              showEditColumnModal({
+                boardId: board.id,
+                index: board.columns.length,
+              }),
+            )
+          }
         >
           Add column
         </button>
