@@ -1,14 +1,27 @@
 import React from 'react'
+import { bool, func, object, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
+
 import { hideModal } from '../actions'
 import { BOARD_QUERY } from './BoardPage'
 
 export const DELETE_COLUMN_MODAL = 'DELETE_COLUMN_MODAL'
 
 class DeleteColumnModal extends React.Component {
+  static propTypes = {
+    boardId: string.isRequired,
+    columnId: string.isRequired,
+    columnQuery: shape({
+      loading: bool.isRequired,
+      column: object,
+    }).isRequired,
+    deleteColumn: func.isRequired,
+    dispatch: func.isRequired,
+  }
+
   handleClose = () => this.props.dispatch(hideModal())
 
   handleDelete = async () => {
@@ -17,18 +30,19 @@ class DeleteColumnModal extends React.Component {
   }
 
   render() {
-    const { data } = this.props
+    const { columnQuery } = this.props
 
     return (
       <Modal isOpen onRequestClose={this.handleClose}>
-        {data.loading ? (
+        {columnQuery.loading ? (
           <div>Loading</div>
         ) : (
           <React.Fragment>
             <h1>Delete column</h1>
             <p>
               Are you sure you want to delete{' '}
-              <strong>{data.column.name}</strong>? This action cannot be undone.
+              <strong>{columnQuery.column.name}</strong>? This action cannot be
+              undone.
             </p>
             <button onClick={this.handleClose}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
@@ -58,8 +72,8 @@ const DELETE_COLUMN_MUTATION = gql`
 
 export default compose(
   graphql(COLUMN_QUERY, {
+    name: 'columnQuery',
     options: ({ columnId }) => ({ variables: { id: columnId } }),
-    skip: ({ columnId }) => !columnId,
   }),
   graphql(DELETE_COLUMN_MUTATION, {
     name: 'deleteColumnMutation',
