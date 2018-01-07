@@ -1,33 +1,55 @@
 import React from 'react'
+import { bool, func, number, object, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
+
 import { hideModal } from '../actions'
 import { BOARD_QUERY } from './BoardPage'
 
 export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL'
 
 class EditColumnModal extends React.Component {
-  state = { name: '', index: '', query: ''}
+  static propTypes = {
+    columnId: string, // required when editing an existing column
+    boardId: string, // required when creating a new column
+    index: number, // required when creating a new column
+    columnQuery: shape({
+      loading: bool.isRequired,
+      column: object,
+    }),
+    updateColumn: func.isRequired,
+    createColumn: func.isRequired,
+    dispatch: func.isRequired,
+  }
+
+  static defaultProps = {
+    columnId: null,
+    boardId: null,
+    index: null,
+    columnQuery: null,
+  }
+
+  state = { name: '', index: '', query: '' }
 
   componentDidMount() {
-    const { columnId, data, index } = this.props
+    const { columnId, columnQuery, index } = this.props
 
-    if (columnId && !data.loading) {
-      this.initializeFormState(data.column)
+    if (columnId && !columnQuery.loading) {
+      this.initializeFormState(columnQuery.column)
     }
 
-    if (typeof index === 'number') {
+    if (index !== null) {
       this.setState({ index })
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { columnId, data } = this.props
+    const { columnId, columnQuery } = this.props
 
-    if (columnId && prevProps.data.loading && !data.loading) {
-      this.initializeFormState(data.column)
+    if (columnId && prevProps.columnQuery.loading && !columnQuery.loading) {
+      this.initializeFormState(columnQuery.column)
     }
   }
 
@@ -66,7 +88,7 @@ class EditColumnModal extends React.Component {
   }
 
   render() {
-    const { columnId, data } = this.props
+    const { columnId, columnQuery } = this.props
     const { name, index, query } = this.state
 
     return (
@@ -80,7 +102,7 @@ class EditColumnModal extends React.Component {
                 <input
                   value={name}
                   onChange={this.handleNameChange}
-                  disabled={data && data.loading}
+                  disabled={columnQuery && columnQuery.loading}
                   required
                 />
               </div>
@@ -92,7 +114,7 @@ class EditColumnModal extends React.Component {
                   value={index}
                   type="number"
                   onChange={this.handleIndexChange}
-                  disabled={data && data.loading}
+                  disabled={columnQuery && columnQuery.loading}
                   required
                 />
               </div>
@@ -103,7 +125,7 @@ class EditColumnModal extends React.Component {
                 <input
                   value={query}
                   onChange={this.handleQueryChange}
-                  disabled={data && data.loading}
+                  disabled={columnQuery && columnQuery.loading}
                   required
                 />
               </div>
@@ -113,7 +135,7 @@ class EditColumnModal extends React.Component {
           <button
             type="submit"
             form="edit-column"
-            disabled={data && data.loading}
+            disabled={columnQuery && columnQuery.loading}
           >
             {columnId ? 'Save' : 'Create'}
           </button>
@@ -135,7 +157,12 @@ const COLUMN_QUERY = gql`
 `
 
 const UPDATE_COLUMN_MUTATION = gql`
-  mutation UpdateColumn($id: ID!, $name: String!, $index: Int!, $query: String!) {
+  mutation UpdateColumn(
+    $id: ID!
+    $name: String!
+    $index: Int!
+    $query: String!
+  ) {
     updateColumn(id: $id, name: $name, index: $index, query: $query) {
       id
       name
@@ -146,7 +173,12 @@ const UPDATE_COLUMN_MUTATION = gql`
 `
 
 const CREATE_COLUMN_MUTATION = gql`
-  mutation CreateColumn($boardId: ID!, $name: String!, $index: Int!, $query: String!) {
+  mutation CreateColumn(
+    $boardId: ID!
+    $name: String!
+    $index: Int!
+    $query: String!
+  ) {
     createColumn(boardId: $boardId, name: $name, index: $index, query: $query) {
       id
       name
@@ -158,6 +190,7 @@ const CREATE_COLUMN_MUTATION = gql`
 
 export default compose(
   graphql(COLUMN_QUERY, {
+    name: 'columnQuery',
     options: ({ columnId }) => ({ variables: { id: columnId } }),
     skip: ({ columnId }) => !columnId,
   }),
@@ -165,7 +198,9 @@ export default compose(
     name: 'updateColumnMutation',
     props: ({ updateColumnMutation }) => ({
       updateColumn: (columnId, name, index, query) =>
-        updateColumnMutation({ variables: { id: columnId, name, index: parseInt(index, 10), query } }),
+        updateColumnMutation({
+          variables: { id: columnId, name, index: parseInt(index, 10), query },
+        }),
     }),
   }),
   graphql(CREATE_COLUMN_MUTATION, {

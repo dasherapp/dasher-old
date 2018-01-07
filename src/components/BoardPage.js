@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, shape, object } from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
@@ -12,6 +13,18 @@ import {
 } from '../actions'
 import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
+
+const propTypes = {
+  userIdQuery: shape({
+    loading: bool.isRequired,
+    user: object,
+  }).isRequired,
+  boardQuery: shape({
+    loading: bool.isRequired,
+    board: object,
+  }).isRequired,
+  dispatch: func.isRequired,
+}
 
 const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
   if (userIdQuery.loading || boardQuery.loading) {
@@ -54,7 +67,7 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
         <ul>
           {board.columns.map(column => (
             <li key={column.id}>
-              {column.name} ({column.index}, {column.query})
+              {column.index} {column.name} ({column.query})
               <button
                 onClick={() =>
                   dispatch(showEditColumnModal({ columnId: column.id }))
@@ -93,6 +106,8 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
     </div>
   )
 }
+
+BoardPage.propTypes = propTypes
 
 const USER_ID_QUERY = gql`
   query UserId {

@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, object, shape, string } from 'prop-types'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
@@ -11,6 +12,17 @@ import { USER_BOARDS_QUERY } from './Boards'
 export const DELETE_BOARD_MODAL = 'DELETE_BOARD_MODAL'
 
 class DeleteBoardModal extends React.Component {
+  static propTypes = {
+    boardId: string.isRequired,
+    boardQuery: shape({
+      loading: bool.isRequired,
+      board: object,
+    }).isRequired,
+    deleteBoard: func.isRequired,
+    dispatch: func.isRequired,
+    history: shape({ push: func.isRequired }).isRequired,
+  }
+
   handleClose = () => this.props.dispatch(hideModal())
 
   handleDelete = async () => {
@@ -20,18 +32,19 @@ class DeleteBoardModal extends React.Component {
   }
 
   render() {
-    const { data } = this.props
+    const { boardQuery } = this.props
 
     return (
       <Modal isOpen onRequestClose={this.handleClose}>
-        {data.loading ? (
+        {boardQuery.loading ? (
           <div>Loading</div>
         ) : (
           <React.Fragment>
             <h1>Delete board</h1>
             <p>
-              Are you sure you want to delete <strong>{data.board.name}</strong>?
-              This action cannot be undone.
+              Are you sure you want to delete{' '}
+              <strong>{boardQuery.board.name}</strong>? This action cannot be
+              undone.
             </p>
             <button onClick={this.handleClose}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
@@ -61,6 +74,7 @@ const DELETE_BOARD_MUTATION = gql`
 export default compose(
   withRouter,
   graphql(BOARD_QUERY, {
+    name: 'boardQuery',
     options: ({ boardId }) => ({ variables: { id: boardId } }),
   }),
   graphql(DELETE_BOARD_MUTATION, {

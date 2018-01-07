@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, object, shape, string } from 'prop-types'
 import { Redirect } from 'react-router-dom'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -7,6 +8,16 @@ import queryString from 'query-string'
 import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class LoginPage extends React.Component {
+  static propTypes = {
+    userIdQuery: shape({
+      loading: bool.isRequired,
+      user: object,
+    }).isRequired,
+    authenticateUser: func.isRequired,
+    history: shape({ replace: func.isRequired }).isRequired,
+    location: shape({ search: string.isRequired }).isRequired,
+  }
+
   state = { loading: false, error: '' }
 
   componentDidMount() {
@@ -55,14 +66,14 @@ class LoginPage extends React.Component {
   }
 
   render() {
-    const { data } = this.props
+    const { userIdQuery } = this.props
     const { loading, error } = this.state
 
-    if (data.loading) {
+    if (userIdQuery.loading) {
       return <div>Loading</div>
     }
 
-    return data.user ? (
+    return userIdQuery.user ? (
       <Redirect to="/" />
     ) : (
       <div>
@@ -102,6 +113,7 @@ const AUTHENTICATE_USER_MUTATION = gql`
 
 export default compose(
   graphql(USER_ID_QUERY, {
+    name: 'userIdQuery',
     options: { fetchPolicy: 'network-only' },
   }),
   graphql(AUTHENTICATE_USER_MUTATION, {

@@ -1,4 +1,5 @@
 import React from 'react'
+import { object, oneOf } from 'prop-types'
 import { connect } from 'react-redux'
 import EditBoardModal, { EDIT_BOARD_MODAL } from './EditBoardModal'
 import EditColumnModal, { EDIT_COLUMN_MODAL } from './EditColumnModal'
@@ -12,6 +13,16 @@ const MODAL_COMPONENTS = {
   [DELETE_COLUMN_MODAL]: DeleteColumnModal,
 }
 
+const propTypes = {
+  modalType: oneOf(Object.keys(MODAL_COMPONENTS)),
+  modalProps: object,
+}
+
+const defaultProps = {
+  modalType: null,
+  modalProps: {},
+}
+
 const ModalRoot = ({ modalType, modalProps }) => {
   if (!modalType) {
     return null
@@ -19,5 +30,8 @@ const ModalRoot = ({ modalType, modalProps }) => {
 
   return React.createElement(MODAL_COMPONENTS[modalType], modalProps)
 }
+
+ModalRoot.propTypes = propTypes
+ModalRoot.defaultProps = defaultProps
 
 export default connect(state => state.modal)(ModalRoot)

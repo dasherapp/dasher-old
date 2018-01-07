@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool, func, object, shape } from 'prop-types'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { withRouter } from 'react-router-dom'
@@ -6,6 +7,14 @@ import { withRouter } from 'react-router-dom'
 import { GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class AccountMenu extends React.Component {
+  static propTypes = {
+    userQuery: shape({
+      loading: bool.isRequired,
+      user: object,
+    }).isRequired,
+    history: shape({ push: func.isRequired }).isRequired,
+  }
+
   logOutUser = () => {
     localStorage.removeItem(GRAPHCOOL_TOKEN)
     localStorage.removeItem(GITHUB_TOKEN)
@@ -13,14 +22,14 @@ class AccountMenu extends React.Component {
   }
 
   render() {
-    const { data } = this.props
+    const { userQuery } = this.props
 
-    if (data.loading) {
+    if (userQuery.loading) {
       return <div>Loading</div>
     }
 
-    if (data.user) {
-      const { name, username, avatarUrl } = data.user
+    if (userQuery.user) {
+      const { name, username, avatarUrl } = userQuery.user
       return (
         <details>
           <summary>
@@ -51,5 +60,8 @@ const USER_QUERY = gql`
 
 export default compose(
   withRouter,
-  graphql(USER_QUERY, { options: { fetchPolicy: 'network-only' } }),
+  graphql(USER_QUERY, {
+    name: 'userQuery',
+    options: { fetchPolicy: 'network-only' },
+  }),
 )(AccountMenu)

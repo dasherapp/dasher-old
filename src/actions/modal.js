@@ -10,20 +10,20 @@ export function showModal(modalType, modalProps) {
   return { type: SHOW_MODAL, modalType, modalProps }
 }
 
-export function showEditBoardModal({ boardId, ownerId }) {
-  return showModal(EDIT_BOARD_MODAL, { boardId, ownerId })
+export function showEditBoardModal(modalProps) {
+  return showModal(EDIT_BOARD_MODAL, modalProps)
 }
 
-export function showEditColumnModal({ columnId, boardId, index }) {
-  return showModal(EDIT_COLUMN_MODAL, { columnId, boardId, index })
+export function showEditColumnModal(modalProps) {
+  return showModal(EDIT_COLUMN_MODAL, modalProps)
 }
 
-export function showDeleteBoardModal({ boardId }) {
-  return showModal(DELETE_BOARD_MODAL, { boardId })
+export function showDeleteBoardModal(modalProps) {
+  return showModal(DELETE_BOARD_MODAL, modalProps)
 }
 
-export function showDeleteColumnModal({ boardId, columnId }) {
-  return showModal(DELETE_COLUMN_MODAL, { boardId, columnId })
+export function showDeleteColumnModal(modalProps) {
+  return showModal(DELETE_COLUMN_MODAL, modalProps)
 }
 
 export function hideModal() {
