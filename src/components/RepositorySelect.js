@@ -1,10 +1,21 @@
 import React from 'react'
+import { func, string } from 'prop-types'
 import Fuse from 'fuse.js'
 
 import getAllRepositories from '../utils/getAllRepositories'
 import Select from './Select'
 
 class RepositorySelect extends React.Component {
+  static propTypes = {
+    value: string,
+    onChange: func,
+  }
+
+  static defaultProps = {
+    value: '',
+    onChange: () => {},
+  }
+
   state = { repositories: [] }
 
   async componentDidMount() {
