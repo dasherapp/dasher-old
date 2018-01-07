@@ -9,6 +9,10 @@
         "requiredFirst": true,
         "sortShapeProp": true
       }
+    ],
+    "react/require-default-props": [
+      "error",
+      { "forbidDefaultForRequired": true }
     ]
   }
 }
