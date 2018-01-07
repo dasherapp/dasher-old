@@ -8,11 +8,11 @@ import { GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class AccountMenu extends React.Component {
   static propTypes = {
-    history: shape({ push: func.isRequired }).isRequired,
     userQuery: shape({
       loading: bool.isRequired,
       user: object,
     }).isRequired,
+    history: shape({ push: func.isRequired }).isRequired,
   }
 
   logOutUser = () => {

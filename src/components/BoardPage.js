@@ -15,15 +15,15 @@ import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
 
 const propTypes = {
+  userIdQuery: shape({
+    loading: bool.isRequired,
+    user: object,
+  }).isRequired,
   boardQuery: shape({
     loading: bool.isRequired,
     board: object,
   }).isRequired,
   dispatch: func.isRequired,
-  userIdQuery: shape({
-    loading: bool.isRequired,
-    user: object,
-  }).isRequired,
 }
 
 const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {

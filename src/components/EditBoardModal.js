@@ -14,19 +14,21 @@ export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
   static propTypes = {
-    dispatch: func.isRequired,
-    boardId: string,
+    boardId: string, // required when editing an existing board
+    ownerId: string, // required when creating a new board
     boardQuery: shape({
       loading: bool.isRequired,
       board: object,
     }),
-    ownerId: string,
+    updateBoard: func.isRequired,
+    createBoard: func.isRequired,
+    dispatch: func.isRequired,
   }
 
   static defaultProps = {
     boardId: null,
-    boardQuery: null,
     ownerId: null,
+    boardQuery: null,
   }
 
   state = { name: '', repository: '', repositories: [] }

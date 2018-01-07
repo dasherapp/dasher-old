@@ -12,23 +12,23 @@ export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL'
 
 class EditColumnModal extends React.Component {
   static propTypes = {
-    createColumn: func.isRequired,
-    dispatch: func.isRequired,
-    updateColumn: func.isRequired,
-    boardId: string,
-    columnId: string,
+    columnId: string, // required when editing an existing column
+    boardId: string, // required when creating a new column
+    index: number, // required when creating a new column
     columnQuery: shape({
       loading: bool.isRequired,
       column: object,
     }),
-    index: number,
+    updateColumn: func.isRequired,
+    createColumn: func.isRequired,
+    dispatch: func.isRequired,
   }
 
   static defaultProps = {
-    boardId: null,
     columnId: null,
-    columnQuery: null,
+    boardId: null,
     index: null,
+    columnQuery: null,
   }
 
   state = { name: '', index: '', query: '' }

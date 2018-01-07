@@ -9,13 +9,13 @@ import { GITHUB_CLIENT_ID, GRAPHCOOL_TOKEN, GITHUB_TOKEN } from '../constants'
 
 class LoginPage extends React.Component {
   static propTypes = {
-    authenticateUser: func.isRequired,
-    history: shape({ replace: func.isRequired }).isRequired,
-    location: shape({ search: string.isRequired }).isRequired,
     userIdQuery: shape({
       loading: bool.isRequired,
       user: object,
     }).isRequired,
+    authenticateUser: func.isRequired,
+    history: shape({ replace: func.isRequired }).isRequired,
+    location: shape({ search: string.isRequired }).isRequired,
   }
 
   state = { loading: false, error: '' }

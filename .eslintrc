@@ -2,14 +2,6 @@
   "extends": "react-app",
   "rules": {
     "react/prop-types": "error",
-    "react/sort-prop-types": [
-      "warn",
-      {
-        "callbacksLast": true,
-        "requiredFirst": true,
-        "sortShapeProp": true
-      }
-    ],
     "react/require-default-props": [
       "error",
       { "forbidDefaultForRequired": true }

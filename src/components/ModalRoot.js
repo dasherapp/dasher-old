@@ -14,13 +14,13 @@ const MODAL_COMPONENTS = {
 }
 
 const propTypes = {
-  modalProps: object,
   modalType: oneOf(Object.keys(MODAL_COMPONENTS)),
+  modalProps: object,
 }
 
 const defaultProps = {
-  modalProps: {},
   modalType: null,
+  modalProps: {},
 }
 
 const ModalRoot = ({ modalType, modalProps }) => {

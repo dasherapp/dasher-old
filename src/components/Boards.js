@@ -8,11 +8,11 @@ import gql from 'graphql-tag'
 import { showEditBoardModal, showDeleteBoardModal } from '../actions'
 
 const propTypes = {
-  dispatch: func.isRequired,
   userBoardsQuery: shape({
     loading: bool.isRequired,
     user: object,
   }).isRequired,
+  dispatch: func.isRequired,
 }
 
 const Boards = ({ userBoardsQuery, dispatch }) => (
