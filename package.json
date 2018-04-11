@@ -10,7 +10,7 @@
     "cypress": "cypress open"
   },
   "dependencies": {
-    "apollo-client-preset": "^1.0.5",
+    "apollo-client-preset": "^1.0.8",
     "axios": "^0.17.1",
     "downshift": "^1.31.6",
     "fuse.js": "^3.2.0",
