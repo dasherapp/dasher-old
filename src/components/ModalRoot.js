@@ -1,37 +1,17 @@
 import React from 'react'
-import { object, oneOf } from 'prop-types'
-import { connect } from 'react-redux'
-import EditBoardModal, { EDIT_BOARD_MODAL } from './EditBoardModal'
-import EditColumnModal, { EDIT_COLUMN_MODAL } from './EditColumnModal'
-import DeleteBoardModal, { DELETE_BOARD_MODAL } from './DeleteBoardModal'
-import DeleteColumnModal, { DELETE_COLUMN_MODAL } from './DeleteColumnModal'
+import { Subscribe } from 'unstated'
+import ModalContainer from '../containers/ModalContainer'
 
-const MODAL_COMPONENTS = {
-  [EDIT_BOARD_MODAL]: EditBoardModal,
-  [EDIT_COLUMN_MODAL]: EditColumnModal,
-  [DELETE_BOARD_MODAL]: DeleteBoardModal,
-  [DELETE_COLUMN_MODAL]: DeleteColumnModal,
-}
+const ModalRoot = () => (
+  <Subscribe to={[ModalContainer]}>
+    {modal => {
+      const { component: Component, props } = modal.state
 
-const propTypes = {
-  modalType: oneOf(Object.keys(MODAL_COMPONENTS)),
-  modalProps: object,
-}
+      return Component ? (
+        <Component hideModal={modal.hideModal} {...props} />
+      ) : null
+    }}
+  </Subscribe>
+)
 
-const defaultProps = {
-  modalType: null,
-  modalProps: {},
-}
-
-const ModalRoot = ({ modalType, modalProps }) => {
-  if (!modalType) {
-    return null
-  }
-
-  return React.createElement(MODAL_COMPONENTS[modalType], modalProps)
-}
-
-ModalRoot.propTypes = propTypes
-ModalRoot.defaultProps = defaultProps
-
-export default connect(state => state.modal)(ModalRoot)
+export default ModalRoot
