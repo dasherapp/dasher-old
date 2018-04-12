@@ -1,3 +1,5 @@
+import React from 'react'
+
 import ModalContainer from '../ModalContainer'
 
 test('initializes modal component and props', () => {
