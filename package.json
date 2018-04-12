@@ -28,6 +28,6 @@
     "unstated": "^1.2.0"
   },
   "devDependencies": {
-    "cypress": "^1.4.1"
+    "cypress": "^2.1.0"
   }
 }
