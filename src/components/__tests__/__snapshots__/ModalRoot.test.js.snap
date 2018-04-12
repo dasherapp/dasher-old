@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders modal component after showModal() is called 1`] = `
+<div
+  baz={42}
+  foo="bar"
+  hideModal={[Function]}
+>
+  Example
+</div>
+`;
+
+exports[`renders nothing when modal component is unset 1`] = `null`;
