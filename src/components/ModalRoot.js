@@ -8,9 +8,7 @@ const ModalRoot = () => (
     {modal => {
       const { component: Component, props } = modal.state
 
-      return Component ? (
-        <Component hideModal={modal.hideModal} {...props} />
-      ) : null
+      return Component && <Component hideModal={modal.hideModal} {...props} />
     }}
   </Subscribe>
 )
