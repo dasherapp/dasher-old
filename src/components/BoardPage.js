@@ -1,18 +1,17 @@
 import React from 'react'
-import { bool, func, shape, object } from 'prop-types'
+import { bool, shape, object } from 'prop-types'
+import { Subscribe } from 'unstated'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import {
-  showEditBoardModal,
-  showEditColumnModal,
-  showDeleteBoardModal,
-  showDeleteColumnModal,
-} from '../actions'
+import ModalContainer from '../containers/ModalContainer'
 import NotFoundPage from './NotFoundPage'
 import AccountMenu from './AccountMenu'
+import EditBoardModal from './EditBoardModal'
+import EditColumnModal from './EditColumnModal'
+import DeleteBoardModal from './DeleteBoardModal'
+import DeleteColumnModal from './DeleteColumnModal'
 
 const propTypes = {
   userIdQuery: shape({
@@ -23,7 +22,6 @@ const propTypes = {
     loading: bool.isRequired,
     board: object,
   }).isRequired,
-  dispatch: func.isRequired,
 }
 
 const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
@@ -40,70 +38,70 @@ const BoardPage = ({ userIdQuery, boardQuery, dispatch }) => {
   const isOwner = user && user.id === board.owner.id
 
   return (
-    <div>
-      <AccountMenu />
-      <Link to="/">Back</Link>
-      <div>
-        <h1>{board.name}</h1>
-        <p>{board.repository}</p>
-        {isOwner && (
-          <React.Fragment>
+    <Subscribe to={[ModalContainer]}>
+      {modal => (
+        <div>
+          <AccountMenu />
+          <Link to="/">Back</Link>
+          <div>
+            <h1>{board.name}</h1>
+            <p>{board.repository}</p>
+            {isOwner && (
+              <React.Fragment>
+                <button
+                  onClick={() =>
+                    modal.showModal(EditBoardModal, { boardId: board.id })
+                  }
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() =>
+                    modal.showModal(DeleteBoardModal, { boardId: board.id })
+                  }
+                >
+                  Delete
+                </button>
+              </React.Fragment>
+            )}
+            <ul>
+              {board.columns.map(column => (
+                <li key={column.id}>
+                  {column.index} {column.name} ({column.query})
+                  <button
+                    onClick={() =>
+                      modal.showModal(EditColumnModal, { columnId: column.id })
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() =>
+                      modal.showModal(DeleteColumnModal, {
+                        boardId: board.id,
+                        columnId: column.id,
+                      })
+                    }
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
             <button
               onClick={() =>
-                dispatch(showEditBoardModal({ boardId: board.id }))
+                modal.showModal(EditColumnModal, {
+                  boardId: board.id,
+                  index: board.columns.length,
+                })
               }
             >
-              Edit
+              Add column
             </button>
-            <button
-              onClick={() =>
-                dispatch(showDeleteBoardModal({ boardId: board.id }))
-              }
-            >
-              Delete
-            </button>
-          </React.Fragment>
-        )}
-        <ul>
-          {board.columns.map(column => (
-            <li key={column.id}>
-              {column.index} {column.name} ({column.query})
-              <button
-                onClick={() =>
-                  dispatch(showEditColumnModal({ columnId: column.id }))
-                }
-              >
-                Edit
-              </button>
-              <button
-                onClick={() =>
-                  dispatch(
-                    showDeleteColumnModal({
-                      boardId: board.id,
-                      columnId: column.id,
-                    }),
-                  )
-                }
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button
-          onClick={() =>
-            dispatch(
-              showEditColumnModal({
-                boardId: board.id,
-                index: board.columns.length,
-              }),
-            )
-          }
-        >
-          Add column
-        </button>
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </Subscribe>
   )
 }
 
@@ -145,5 +143,4 @@ export default compose(
     name: 'boardQuery',
     options: ({ match }) => ({ variables: { id: match.params.id } }),
   }),
-  connect(),
 )(BoardPage)

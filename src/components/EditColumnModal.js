@@ -1,14 +1,10 @@
 import React from 'react'
 import { bool, func, number, object, shape, string } from 'prop-types'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 
-import { hideModal } from '../actions'
 import { BOARD_QUERY } from './BoardPage'
-
-export const EDIT_COLUMN_MODAL = 'EDIT_COLUMN_MODAL'
 
 class EditColumnModal extends React.Component {
   static propTypes = {
@@ -21,7 +17,7 @@ class EditColumnModal extends React.Component {
     }),
     updateColumn: func.isRequired,
     createColumn: func.isRequired,
-    dispatch: func.isRequired,
+    hideModal: func.isRequired,
   }
 
   static defaultProps = {
@@ -69,16 +65,18 @@ class EditColumnModal extends React.Component {
     this.setState({ query: event.target.value })
   }
 
-  handleClose = () => {
-    this.props.dispatch(hideModal())
-  }
-
   handleSubmit = event => {
-    const { columnId, boardId, updateColumn, createColumn } = this.props
+    const {
+      columnId,
+      boardId,
+      updateColumn,
+      createColumn,
+      hideModal,
+    } = this.props
     const { name, index, query } = this.state
 
     event.preventDefault()
-    this.handleClose()
+    hideModal()
 
     if (columnId) {
       updateColumn(columnId, name, index, query)
@@ -88,11 +86,11 @@ class EditColumnModal extends React.Component {
   }
 
   render() {
-    const { columnId, columnQuery } = this.props
+    const { columnId, columnQuery, hideModal } = this.props
     const { name, index, query } = this.state
 
     return (
-      <Modal isOpen onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={hideModal}>
         <div>
           <h1>{columnId ? 'Edit column' : 'Add column'}</h1>
           <form id="edit-column" onSubmit={this.handleSubmit}>
@@ -131,7 +129,7 @@ class EditColumnModal extends React.Component {
               </div>
             </label>
           </form>
-          <button onClick={this.handleClose}>Cancel</button>
+          <button onClick={hideModal}>Cancel</button>
           <button
             type="submit"
             form="edit-column"
@@ -224,5 +222,4 @@ export default compose(
         }),
     }),
   }),
-  connect(),
 )(EditColumnModal)

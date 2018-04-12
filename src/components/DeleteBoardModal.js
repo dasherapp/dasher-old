@@ -1,15 +1,11 @@
 import React from 'react'
 import { bool, func, object, shape, string } from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 
-import { hideModal } from '../actions'
 import { USER_BOARDS_QUERY } from './Boards'
-
-export const DELETE_BOARD_MODAL = 'DELETE_BOARD_MODAL'
 
 class DeleteBoardModal extends React.Component {
   static propTypes = {
@@ -19,23 +15,21 @@ class DeleteBoardModal extends React.Component {
       board: object,
     }).isRequired,
     deleteBoard: func.isRequired,
-    dispatch: func.isRequired,
+    hideModal: func.isRequired,
     history: shape({ push: func.isRequired }).isRequired,
   }
 
-  handleClose = () => this.props.dispatch(hideModal())
-
   handleDelete = async () => {
     await this.props.deleteBoard(this.props.boardId)
-    this.handleClose()
+    this.props.hideModal()
     this.props.history.push('/')
   }
 
   render() {
-    const { boardQuery } = this.props
+    const { boardQuery, hideModal } = this.props
 
     return (
-      <Modal isOpen onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={hideModal}>
         {boardQuery.loading ? (
           <div>Loading</div>
         ) : (
@@ -46,7 +40,7 @@ class DeleteBoardModal extends React.Component {
               <strong>{boardQuery.board.name}</strong>? This action cannot be
               undone.
             </p>
-            <button onClick={this.handleClose}>Cancel</button>
+            <button onClick={hideModal}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
           </React.Fragment>
         )}
@@ -94,5 +88,4 @@ export default compose(
         }),
     }),
   }),
-  connect(),
 )(DeleteBoardModal)

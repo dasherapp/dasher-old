@@ -1,16 +1,12 @@
 import React from 'react'
 import { bool, func, object, shape, string } from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 
-import { hideModal } from '../actions'
 import { USER_BOARDS_QUERY } from './Boards'
 import RepositorySelect from './RepositorySelect'
-
-export const EDIT_BOARD_MODAL = 'EDIT_BOARD_MODAL'
 
 class EditBoardModal extends React.Component {
   static propTypes = {
@@ -22,7 +18,7 @@ class EditBoardModal extends React.Component {
     }),
     updateBoard: func.isRequired,
     createBoard: func.isRequired,
-    dispatch: func.isRequired,
+    hideModal: func.isRequired,
   }
 
   static defaultProps = {
@@ -61,16 +57,19 @@ class EditBoardModal extends React.Component {
     this.setState({ repository: value })
   }
 
-  handleClose = () => {
-    this.props.dispatch(hideModal())
-  }
-
   handleSubmit = async event => {
-    const { boardId, ownerId, history, updateBoard, createBoard } = this.props
+    const {
+      boardId,
+      ownerId,
+      history,
+      updateBoard,
+      createBoard,
+      hideModal,
+    } = this.props
     const { name, repository } = this.state
 
     event.preventDefault()
-    this.handleClose()
+    hideModal()
 
     if (boardId) {
       updateBoard(boardId, name, repository)
@@ -81,11 +80,11 @@ class EditBoardModal extends React.Component {
   }
 
   render() {
-    const { boardId, boardQuery } = this.props
+    const { boardId, boardQuery, hideModal } = this.props
     const { name, repository } = this.state
 
     return (
-      <Modal isOpen onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={hideModal}>
         <h1>{boardId ? 'Edit board' : 'New board'}</h1>
         <form id="edit-board" onSubmit={this.handleSubmit}>
           <label>
@@ -107,7 +106,7 @@ class EditBoardModal extends React.Component {
             />
           </label>
         </form>
-        <button onClick={this.handleClose}>Cancel</button>
+        <button onClick={hideModal}>Cancel</button>
         <button
           type="submit"
           form="edit-board"
@@ -178,5 +177,4 @@ export default compose(
         }),
     }),
   }),
-  connect(),
 )(EditBoardModal)

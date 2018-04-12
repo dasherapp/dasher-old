@@ -1,8 +1,8 @@
 import React from 'react'
+import { Provider } from 'unstated'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import Apollo from './Apollo'
-import Store from './Store'
 import ModalRoot from './ModalRoot'
 import PrivateRoute from './PrivateRoute'
 import HomePage from './HomePage'
@@ -12,7 +12,7 @@ import NotFoundPage from './NotFoundPage'
 
 const App = () => (
   <Apollo>
-    <Store>
+    <Provider>
       <Router>
         <React.Fragment>
           <ModalRoot />
@@ -24,7 +24,7 @@ const App = () => (
           </Switch>
         </React.Fragment>
       </Router>
-    </Store>
+    </Provider>
   </Apollo>
 )
 

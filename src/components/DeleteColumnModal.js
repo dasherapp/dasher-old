@@ -1,14 +1,10 @@
 import React from 'react'
 import { bool, func, object, shape, string } from 'prop-types'
-import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Modal from 'react-modal'
 
-import { hideModal } from '../actions'
 import { BOARD_QUERY } from './BoardPage'
-
-export const DELETE_COLUMN_MODAL = 'DELETE_COLUMN_MODAL'
 
 class DeleteColumnModal extends React.Component {
   static propTypes = {
@@ -19,21 +15,19 @@ class DeleteColumnModal extends React.Component {
       column: object,
     }).isRequired,
     deleteColumn: func.isRequired,
-    dispatch: func.isRequired,
+    hideModal: func.isRequired,
   }
-
-  handleClose = () => this.props.dispatch(hideModal())
 
   handleDelete = async () => {
     await this.props.deleteColumn(this.props.columnId)
-    this.handleClose()
+    this.props.hideModal()
   }
 
   render() {
-    const { columnQuery } = this.props
+    const { columnQuery, hideModal } = this.props
 
     return (
-      <Modal isOpen onRequestClose={this.handleClose}>
+      <Modal isOpen onRequestClose={hideModal}>
         {columnQuery.loading ? (
           <div>Loading</div>
         ) : (
@@ -44,7 +38,7 @@ class DeleteColumnModal extends React.Component {
               <strong>{columnQuery.column.name}</strong>? This action cannot be
               undone.
             </p>
-            <button onClick={this.handleClose}>Cancel</button>
+            <button onClick={hideModal}>Cancel</button>
             <button onClick={this.handleDelete}>Delete</button>
           </React.Fragment>
         )}
@@ -100,5 +94,4 @@ export default compose(
         }),
     }),
   }),
-  connect(),
 )(DeleteColumnModal)
